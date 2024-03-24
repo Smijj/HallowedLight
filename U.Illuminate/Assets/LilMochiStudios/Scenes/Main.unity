@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 265356679}
   - component: {fileID: 265356678}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: SquareRenderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -335,7 +335,7 @@ GameObject:
   - component: {fileID: 1061753234}
   - component: {fileID: 1061753233}
   m_Layer: 0
-  m_Name: Square Renderer
+  m_Name: Square
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -355,12 +355,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_MeshFilter: {fileID: 265356679}
   m_Gridscale: 2
+  m_IsoValue: 1.1
+  m_TopLerp: 0
   m_EnableGizmos: 1
   m_GizmosSize: 0.3
-  m_TopRightState: 0
-  m_BottomRightState: 1
-  m_BottomLeftState: 0
-  m_TopLeftState: 1
+  m_TopRightValue: 0
+  m_BottomRightValue: 0
+  m_BottomLeftValue: 0
+  m_TopLeftValue: 0
 --- !u!4 &1061753234
 Transform:
   m_ObjectHideFlags: 0

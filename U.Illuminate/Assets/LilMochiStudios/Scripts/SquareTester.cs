@@ -20,16 +20,18 @@ public class SquareTester : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] private float m_Gridscale = 1f;
+    [SerializeField] private float m_IsoValue;
+    [SerializeField] private float m_TopLerp;
     [SerializeField] private bool m_EnableGizmos = false;
     [SerializeField] private float m_GizmosSize = 0.5f;
     private List<Vector3> m_Vertices = new List<Vector3>();
     private List<int> m_Triangles = new List<int>();
 
     [Header("Configuration")]
-    [SerializeField] private bool m_TopRightState;
-    [SerializeField] private bool m_BottomRightState;
-    [SerializeField] private bool m_BottomLeftState;
-    [SerializeField] private bool m_TopLeftState;
+    [SerializeField] private float m_TopRightValue;
+    [SerializeField] private float m_BottomRightValue;
+    [SerializeField] private float m_BottomLeftValue;
+    [SerializeField] private float m_TopLeftValue;
 
     private void Start() {
         m_TopRight = m_Gridscale * Vector2.one / 2; 
@@ -41,47 +43,20 @@ public class SquareTester : MonoBehaviour
         m_TopLeft = m_BottomLeft + Vector2.up * m_Gridscale;
         m_TopCentre = m_TopLeft + (Vector2.right / 2) * m_Gridscale;
 
-        //Vector3[] vertices = new Vector3[8];
-        //int[] triangles = new int[6];
-
-        //vertices[0] = m_TopRight;
-        //vertices[1] = m_RightCentre;
-        //vertices[2] = m_BottomRight;
-        //vertices[3] = m_BottomCentre;
-        //vertices[4] = m_BottomLeft;
-        //vertices[5] = m_LeftCentre;
-        //vertices[6] = m_TopLeft;
-        //vertices[7] = m_TopCentre;
-
-
-        //triangles[0] = 7;
-        //triangles[1] = 1;
-        //triangles[2] = 3;
-        //triangles[3] = 7;
-        //triangles[4] = 3;
-        //triangles[5] = 5;
-
-        Mesh mesh = new Mesh();
-
-        m_Vertices.Clear();
-        m_Triangles.Clear();
-
-        Triangulate(GetConfiguration());
-
-        mesh.vertices = m_Vertices.ToArray();
-        mesh.triangles = m_Triangles.ToArray();
-
-        m_MeshFilter.mesh = mesh;
+        GenerateMesh();
     }
 
     private void Update() {
-        //Debug.Log("Config: " + GetConfiguration());
+        GenerateMesh();
+    }
 
+    private void GenerateMesh() {
         Mesh mesh = new Mesh();
 
         m_Vertices.Clear();
         m_Triangles.Clear();
 
+        Interpolate();
         Triangulate(GetConfiguration());
 
         mesh.vertices = m_Vertices.ToArray();
@@ -92,7 +67,7 @@ public class SquareTester : MonoBehaviour
 
     private int GetConfiguration() {
         int config = 0;
-        if (m_TopRightState) {
+        if (m_TopRightValue > m_IsoValue) {
             config += 1;
 
             // (1 << 0) = 0001
@@ -100,17 +75,37 @@ public class SquareTester : MonoBehaviour
             // 0101 | 1010 = 1111 = 15
             //config = config | (1 << 0);
         }
-        if (m_BottomRightState) {
+        if (m_BottomRightValue > m_IsoValue) {
             config += 2;
         }
-        if (m_BottomLeftState) {
+        if (m_BottomLeftValue > m_IsoValue) {
             config += 4;
         }
-        if (m_TopLeftState) {
+        if (m_TopLeftValue > m_IsoValue) {
             config += 8;
         }
 
         return config;
+    }
+
+    private void Interpolate() {
+
+        // Top Centre
+        //float topLerp = (m_IsoValue - m_TopLeftValue) / (m_TopRightValue - m_TopLeftValue);
+        //topLerp = Mathf.Clamp01(topLerp);
+        //m_TopCentre = m_TopLeft + (m_TopRight - m_TopLeft) * topLerp;
+
+        float topLerp = Mathf.InverseLerp(m_TopLeftValue, m_TopRightValue, m_IsoValue);
+        m_TopCentre = m_TopLeft + (m_TopRight - m_TopLeft) * topLerp;
+        
+        float rightLerp = Mathf.InverseLerp(m_TopRightValue, m_BottomRightValue, m_IsoValue);
+        m_RightCentre = m_TopRight + (m_BottomRight - m_TopRight) * rightLerp;
+
+        float bottomLerp = Mathf.InverseLerp(m_BottomLeftValue, m_BottomRightValue, m_IsoValue);
+        m_BottomCentre = m_BottomLeft + (m_BottomRight - m_BottomLeft) * bottomLerp;
+
+        float leftLerp = Mathf.InverseLerp(m_TopLeftValue, m_BottomLeftValue, m_IsoValue);
+        m_LeftCentre = m_TopLeft + (m_BottomLeft - m_TopLeft) * leftLerp;
     }
 
     private void Triangulate(int config) {
