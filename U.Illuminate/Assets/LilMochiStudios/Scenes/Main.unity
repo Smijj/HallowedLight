@@ -355,11 +355,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_MeshFilter: {fileID: 265356679}
   m_Gridscale: 2
-  m_EnableGizmos: 0
-  m_TopRightState: 1
-  m_BottomRightState: 0
-  m_BottomLeftState: 1
-  m_TopLeftState: 0
+  m_EnableGizmos: 1
+  m_GizmosSize: 0.3
+  m_TopRightState: 0
+  m_BottomRightState: 1
+  m_BottomLeftState: 0
+  m_TopLeftState: 1
 --- !u!4 &1061753234
 Transform:
   m_ObjectHideFlags: 0

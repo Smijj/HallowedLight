@@ -21,6 +21,7 @@ public class SquareTester : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private float m_Gridscale = 1f;
     [SerializeField] private bool m_EnableGizmos = false;
+    [SerializeField] private float m_GizmosSize = 0.5f;
     private List<Vector3> m_Vertices = new List<Vector3>();
     private List<int> m_Triangles = new List<int>();
 
@@ -75,6 +76,18 @@ public class SquareTester : MonoBehaviour
 
     private void Update() {
         //Debug.Log("Config: " + GetConfiguration());
+
+        Mesh mesh = new Mesh();
+
+        m_Vertices.Clear();
+        m_Triangles.Clear();
+
+        Triangulate(GetConfiguration());
+
+        mesh.vertices = m_Vertices.ToArray();
+        mesh.triangles = m_Triangles.ToArray();
+
+        m_MeshFilter.mesh = mesh;
     }
 
     private int GetConfiguration() {
@@ -103,8 +116,6 @@ public class SquareTester : MonoBehaviour
     private void Triangulate(int config) {
         switch (config) {
             case 0:
-
-
                 break;
             case 1:
                 m_Vertices.AddRange(new Vector3[] { m_TopRight, m_RightCentre, m_TopCentre });
@@ -126,6 +137,46 @@ public class SquareTester : MonoBehaviour
                 m_Vertices.AddRange(new Vector3[] { m_TopRight, m_RightCentre, m_BottomCentre, m_BottomLeft, m_LeftCentre, m_TopCentre});
                 m_Triangles.AddRange(new int[] { 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5 });
                 break;
+            case 6:
+                m_Vertices.AddRange(new Vector3[] { m_BottomRight, m_BottomLeft, m_LeftCentre, m_RightCentre });
+                m_Triangles.AddRange(new int[] { 0, 1, 2, 0, 2, 3 });
+                break;
+            case 7:
+                m_Vertices.AddRange(new Vector3[] { m_TopRight, m_BottomRight, m_BottomLeft, m_LeftCentre, m_TopCentre });
+                m_Triangles.AddRange(new int[] { 0, 1, 2, 0, 2, 3, 0, 3, 4 });
+                break;
+            case 8:
+                m_Vertices.AddRange(new Vector3[] { m_LeftCentre, m_TopLeft, m_TopCentre });
+                m_Triangles.AddRange(new int[] { 0, 1, 2 });
+                break;
+            case 9:
+                m_Vertices.AddRange(new Vector3[] { m_TopRight, m_RightCentre, m_LeftCentre, m_TopLeft });
+                m_Triangles.AddRange(new int[] { 0, 1, 2, 0, 2, 3 });
+                break;
+            case 10:
+                m_Vertices.AddRange(new Vector3[] { m_RightCentre, m_BottomRight, m_BottomCentre, m_LeftCentre, m_TopLeft, m_TopCentre });
+                m_Triangles.AddRange(new int[] { 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5 });
+                break;
+            case 11:
+                m_Vertices.AddRange(new Vector3[] { m_TopRight, m_BottomRight, m_BottomCentre, m_LeftCentre, m_TopLeft });
+                m_Triangles.AddRange(new int[] { 0, 1, 2, 0, 2, 3, 0, 3, 4 });
+                break;
+            case 12:
+                m_Vertices.AddRange(new Vector3[] { m_BottomCentre, m_BottomLeft, m_TopLeft, m_TopCentre});
+                m_Triangles.AddRange(new int[] { 0, 1, 2, 0, 2, 3 });
+                break;
+            case 13:
+                m_Vertices.AddRange(new Vector3[] { m_TopRight, m_RightCentre, m_BottomCentre, m_BottomLeft, m_TopLeft });
+                m_Triangles.AddRange(new int[] { 0, 1, 2, 0, 2, 3, 0, 3, 4 });
+                break;
+            case 14:
+                m_Vertices.AddRange(new Vector3[] { m_RightCentre, m_BottomRight, m_BottomLeft, m_TopLeft, m_TopCentre });
+                m_Triangles.AddRange(new int[] { 0, 1, 2, 0, 2, 3, 0, 3, 4 });
+                break;
+            case 15:
+                m_Vertices.AddRange(new Vector3[] { m_TopRight, m_BottomRight, m_BottomLeft, m_TopLeft});
+                m_Triangles.AddRange(new int[] { 0, 1, 2, 0, 2, 3 });
+                break;
         }
     }
 
@@ -133,14 +184,14 @@ public class SquareTester : MonoBehaviour
         if (!m_EnableGizmos) return;
         Gizmos.color = Color.red;
 
-        Gizmos.DrawSphere(m_TopRight, m_Gridscale / 4f);
-        Gizmos.DrawSphere(m_BottomRight, m_Gridscale / 4f);
-        Gizmos.DrawSphere(m_BottomLeft, m_Gridscale / 4f);
-        Gizmos.DrawSphere(m_TopLeft, m_Gridscale / 4f);
+        Gizmos.DrawSphere(m_TopRight, m_GizmosSize);
+        Gizmos.DrawSphere(m_BottomRight, m_GizmosSize);
+        Gizmos.DrawSphere(m_BottomLeft, m_GizmosSize);
+        Gizmos.DrawSphere(m_TopLeft, m_GizmosSize);
 
-        Gizmos.DrawSphere(m_RightCentre, m_Gridscale / 8f);
-        Gizmos.DrawSphere(m_BottomCentre, m_Gridscale / 8f);
-        Gizmos.DrawSphere(m_LeftCentre, m_Gridscale / 8f);
-        Gizmos.DrawSphere(m_TopCentre, m_Gridscale / 8f);
+        Gizmos.DrawSphere(m_RightCentre, m_GizmosSize / 2f);
+        Gizmos.DrawSphere(m_BottomCentre, m_GizmosSize / 2f);
+        Gizmos.DrawSphere(m_LeftCentre, m_GizmosSize / 2f);
+        Gizmos.DrawSphere(m_TopCentre, m_GizmosSize / 2f);
     }
 }
