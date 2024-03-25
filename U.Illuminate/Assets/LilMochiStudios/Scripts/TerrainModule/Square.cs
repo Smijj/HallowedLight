@@ -22,7 +22,7 @@ public struct Square
     public Square(Vector2 position, float gridScale) {
         this.m_Position = position;
 
-        m_TopRight = gridScale * Vector2.one / 2;   // the /2 centres the whole square as all the proceeding verts are based in this ones position
+        m_TopRight = m_Position + gridScale * Vector2.one / 2;   // the /2 centres the whole square as all the proceeding verts are based in this ones position
         m_BottomRight = m_TopRight + Vector2.down * gridScale;
         m_BottomLeft = m_BottomRight + Vector2.left * gridScale;
         m_TopLeft = m_BottomLeft + Vector2.up * gridScale;
@@ -38,6 +38,10 @@ public struct Square
     }
 
     public void Triangulate(float isoValue, float[] values) {
+
+        this.m_Vertices.Clear();
+        this.m_Triangles.Clear();
+
         int configuration = GetConfiguration(isoValue, values);
 
         Interpolate(isoValue, values);
