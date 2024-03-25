@@ -15,6 +15,7 @@ public class InputManager : MonoBehaviour
 
 
     void Start() {
+        Application.targetFrameRate = 60;
         m_Camera = Camera.main;
     }
 

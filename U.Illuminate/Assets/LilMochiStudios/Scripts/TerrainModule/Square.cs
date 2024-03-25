@@ -18,6 +18,7 @@ public struct Square
 
     private List<Vector3> m_Vertices;
     private List<int> m_Triangles;
+    private List<Vector2> m_UVs;
 
     public Square(Vector2 position, float gridScale) {
         this.m_Position = position;
@@ -35,12 +36,14 @@ public struct Square
         
         this.m_Vertices = new List<Vector3>();
         this.m_Triangles = new List<int>();
+        this.m_UVs = new List<Vector2>();
     }
 
     public void Triangulate(float isoValue, float[] values) {
 
         this.m_Vertices.Clear();
         this.m_Triangles.Clear();
+        this.m_UVs.Clear();
 
         int configuration = GetConfiguration(isoValue, values);
 
@@ -54,6 +57,10 @@ public struct Square
 
     public int[] GetTriangles() {
         return this.m_Triangles.ToArray();
+    }
+
+    public Vector2[] GetUVs() {
+        return this.m_UVs.ToArray();
     }
 
     private void Interpolate(float isoValue, float[] values) {
@@ -78,62 +85,77 @@ public struct Square
             case 1:
                 m_Vertices.AddRange(new Vector3[] { m_TopRight, m_RightCentre, m_TopCentre });
                 m_Triangles.AddRange(new int[] { 0, 1, 2 });
+                m_UVs.AddRange(new Vector2[] { m_TopRight, m_RightCentre, m_TopCentre });
                 break;
             case 2:
                 m_Vertices.AddRange(new Vector3[] { m_RightCentre, m_BottomRight, m_BottomCentre });
                 m_Triangles.AddRange(new int[] { 0, 1, 2 });
+                m_UVs.AddRange(new Vector2[] { m_RightCentre, m_BottomRight, m_BottomCentre });
                 break;
             case 3:
                 m_Vertices.AddRange(new Vector3[] { m_TopRight, m_BottomRight, m_BottomCentre, m_TopCentre });
                 m_Triangles.AddRange(new int[] { 0, 1, 2, 0, 2, 3 });
+                m_UVs.AddRange(new Vector2[] { m_TopRight, m_BottomRight, m_BottomCentre, m_TopCentre });
                 break;
             case 4:
                 m_Vertices.AddRange(new Vector3[] { m_BottomCentre, m_BottomLeft, m_LeftCentre });
                 m_Triangles.AddRange(new int[] { 0, 1, 2 });
+                m_UVs.AddRange(new Vector2[] { m_BottomCentre, m_BottomLeft, m_LeftCentre });
                 break;
             case 5:
                 m_Vertices.AddRange(new Vector3[] { m_TopRight, m_RightCentre, m_BottomCentre, m_BottomLeft, m_LeftCentre, m_TopCentre });
                 m_Triangles.AddRange(new int[] { 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5 });
+                m_UVs.AddRange(new Vector2[] { m_TopRight, m_RightCentre, m_BottomCentre, m_BottomLeft, m_LeftCentre, m_TopCentre });
                 break;
             case 6:
                 m_Vertices.AddRange(new Vector3[] { m_BottomRight, m_BottomLeft, m_LeftCentre, m_RightCentre });
                 m_Triangles.AddRange(new int[] { 0, 1, 2, 0, 2, 3 });
+                m_UVs.AddRange(new Vector2[] { m_BottomRight, m_BottomLeft, m_LeftCentre, m_RightCentre });
                 break;
             case 7:
                 m_Vertices.AddRange(new Vector3[] { m_TopRight, m_BottomRight, m_BottomLeft, m_LeftCentre, m_TopCentre });
                 m_Triangles.AddRange(new int[] { 0, 1, 2, 0, 2, 3, 0, 3, 4 });
+                m_UVs.AddRange(new Vector2[] { m_TopRight, m_BottomRight, m_BottomLeft, m_LeftCentre, m_TopCentre });
                 break;
             case 8:
                 m_Vertices.AddRange(new Vector3[] { m_LeftCentre, m_TopLeft, m_TopCentre });
                 m_Triangles.AddRange(new int[] { 0, 1, 2 });
+                m_UVs.AddRange(new Vector2[] { m_LeftCentre, m_TopLeft, m_TopCentre });
                 break;
             case 9:
                 m_Vertices.AddRange(new Vector3[] { m_TopRight, m_RightCentre, m_LeftCentre, m_TopLeft });
                 m_Triangles.AddRange(new int[] { 0, 1, 2, 0, 2, 3 });
+                m_UVs.AddRange(new Vector2[] { m_TopRight, m_RightCentre, m_LeftCentre, m_TopLeft });
                 break;
             case 10:
                 m_Vertices.AddRange(new Vector3[] { m_RightCentre, m_BottomRight, m_BottomCentre, m_LeftCentre, m_TopLeft, m_TopCentre });
                 m_Triangles.AddRange(new int[] { 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5 });
+                m_UVs.AddRange(new Vector2[] { m_RightCentre, m_BottomRight, m_BottomCentre, m_LeftCentre, m_TopLeft, m_TopCentre });
                 break;
             case 11:
                 m_Vertices.AddRange(new Vector3[] { m_TopRight, m_BottomRight, m_BottomCentre, m_LeftCentre, m_TopLeft });
                 m_Triangles.AddRange(new int[] { 0, 1, 2, 0, 2, 3, 0, 3, 4 });
+                m_UVs.AddRange(new Vector2[] { m_TopRight, m_BottomRight, m_BottomCentre, m_LeftCentre, m_TopLeft });
                 break;
             case 12:
                 m_Vertices.AddRange(new Vector3[] { m_BottomCentre, m_BottomLeft, m_TopLeft, m_TopCentre });
                 m_Triangles.AddRange(new int[] { 0, 1, 2, 0, 2, 3 });
+                m_UVs.AddRange(new Vector2[] { m_BottomCentre, m_BottomLeft, m_TopLeft, m_TopCentre });
                 break;
             case 13:
                 m_Vertices.AddRange(new Vector3[] { m_TopRight, m_RightCentre, m_BottomCentre, m_BottomLeft, m_TopLeft });
                 m_Triangles.AddRange(new int[] { 0, 1, 2, 0, 2, 3, 0, 3, 4 });
+                m_UVs.AddRange(new Vector2[] { m_TopRight, m_RightCentre, m_BottomCentre, m_BottomLeft, m_TopLeft });
                 break;
             case 14:
                 m_Vertices.AddRange(new Vector3[] { m_RightCentre, m_BottomRight, m_BottomLeft, m_TopLeft, m_TopCentre });
                 m_Triangles.AddRange(new int[] { 0, 1, 2, 0, 2, 3, 0, 3, 4 });
+                m_UVs.AddRange(new Vector2[] { m_RightCentre, m_BottomRight, m_BottomLeft, m_TopLeft, m_TopCentre });
                 break;
             case 15:
                 m_Vertices.AddRange(new Vector3[] { m_TopRight, m_BottomRight, m_BottomLeft, m_TopLeft });
                 m_Triangles.AddRange(new int[] { 0, 1, 2, 0, 2, 3 });
+                m_UVs.AddRange(new Vector2[] { m_TopRight, m_BottomRight, m_BottomLeft, m_TopLeft });
                 break;
         }
     }

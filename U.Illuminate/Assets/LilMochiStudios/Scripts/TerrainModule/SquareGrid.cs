@@ -10,6 +10,7 @@ public struct SquareGrid
 
     private List<Vector3> m_Vertices;
     private List<int> m_Triangles;
+    private List<Vector2> m_UVs;
 
     private float m_IsoValue;
 
@@ -18,6 +19,7 @@ public struct SquareGrid
         this.Squares = new Square[size, size];
         this.m_Vertices = new List<Vector3>();
         this.m_Triangles = new List<int>();
+        this.m_UVs = new List<Vector2>();
         this.m_IsoValue = isoValue;
 
         for (int y = 0; y < size; y++) {
@@ -35,6 +37,7 @@ public struct SquareGrid
     public void Update(float[,] grid) {
         this.m_Vertices.Clear();
         this.m_Triangles.Clear();
+        this.m_UVs.Clear();
 
         int triangleStartIndex = 0;
 
@@ -58,6 +61,8 @@ public struct SquareGrid
                 this.m_Triangles.AddRange(currentSquareTriangles);
 
                 triangleStartIndex += currentSquare.GetVertices().Length;
+
+                this.m_UVs.AddRange(currentSquare.GetUVs());
             }
         }
     }
@@ -67,5 +72,8 @@ public struct SquareGrid
     }
     public int[] GetTriangles() {
         return this.m_Triangles.ToArray();
+    }
+    public Vector2[] GetUVs() {
+        return this.m_UVs.ToArray();
     }
 }

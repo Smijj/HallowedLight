@@ -23,6 +23,8 @@ public class TerrainGenerator : MonoBehaviour
     [SerializeField] private int m_GridSize;
     [SerializeField] private float m_GridScale;
     [SerializeField] private float m_IsoValue;
+    [NaughtyAttributes.OnValueChanged("GenerateMesh")]
+    [SerializeField] private float m_UVScale;
 
     private SquareGrid m_SquareGrid;
     private float[,] m_Grid;
@@ -39,8 +41,11 @@ public class TerrainGenerator : MonoBehaviour
         InputManager.OnTouching -= TouchingCallback;
     }
 
-    private void Start() {
-        Application.targetFrameRate = 60;
+
+    public void Initialize(int gridSize, float gridScale) {
+        this.m_GridSize = gridSize;
+        this.m_GridScale = gridScale;
+
         m_Mesh = new Mesh();
 
         // TODO: Put into the SquareGrid struct
@@ -95,6 +100,16 @@ public class TerrainGenerator : MonoBehaviour
 
         m_Mesh.vertices = m_SquareGrid.GetVertices();
         m_Mesh.triangles = m_SquareGrid.GetTriangles();
+
+        Vector2[] uvs = m_SquareGrid.GetUVs();
+        for (int i = 0; i < uvs.Length; i++) {
+            uvs[i] /= m_GridScale;
+            uvs[i] /= (m_GridSize - 1);
+            uvs[i] /= m_UVScale;
+
+            uvs[i] += Vector2.one / 2;
+        }
+        m_Mesh.uv = uvs;
 
         m_MeshFilter.mesh = m_Mesh;
 
