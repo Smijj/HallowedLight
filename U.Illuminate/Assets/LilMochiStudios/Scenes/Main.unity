@@ -909,9 +909,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dfeb7033215f7f4ea6d785b5b0ac990, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_GridSize: {x: 1, y: 1}
-  m_ChunkGridSize: 40
-  m_ChunkGridScale: 0.1
+  m_GridSize: {x: 5, y: 5}
+  m_ChunkGridSize: 20
+  m_ChunkGridScale: 0.5
   m_TerrainGeneratorPrefab: {fileID: 9023654562941497618, guid: 347c3bcc091542746b653698bc2df579, type: 3}
 --- !u!1 &1647751155
 GameObject:

@@ -30,9 +30,14 @@ public class TerrainManager : MonoBehaviour
                 spawnPosition.x -= (((float)m_GridSize.x / 2) * chunkSize) - chunkSize / 2;
                 spawnPosition.y -= (((float)m_GridSize.y / 2) * chunkSize) - chunkSize / 2;
 
+                float xOffset = (float)x / m_GridSize.x;
+                float yOffset = (float)y / m_GridSize.y;
+
+                Vector2 uvOffset = new Vector2(xOffset, yOffset);
+
                 TerrainGenerator terrainGenerator = Instantiate(m_TerrainGeneratorPrefab, spawnPosition, Quaternion.identity, transform);
 
-                terrainGenerator.Initialize(m_ChunkGridSize, m_ChunkGridScale);
+                terrainGenerator.Initialize(m_ChunkGridSize, m_ChunkGridScale, uvOffset, m_GridSize);
             }
         }
     }

@@ -25,6 +25,8 @@ public class TerrainGenerator : MonoBehaviour
     [SerializeField] private float m_IsoValue;
     [NaughtyAttributes.OnValueChanged("GenerateMesh")]
     [SerializeField] private float m_UVScale;
+    private Vector2 m_UVOffset;
+    private Vector2Int m_ChunkArraySize;
 
     private SquareGrid m_SquareGrid;
     private float[,] m_Grid;
@@ -42,9 +44,11 @@ public class TerrainGenerator : MonoBehaviour
     }
 
 
-    public void Initialize(int gridSize, float gridScale) {
+    public void Initialize(int gridSize, float gridScale, Vector2 uvOffset, Vector2Int chunkArraySize) {
         this.m_GridSize = gridSize;
         this.m_GridScale = gridScale;
+        this.m_UVOffset = uvOffset;
+        this.m_ChunkArraySize = chunkArraySize;
 
         m_Mesh = new Mesh();
 
@@ -104,10 +108,14 @@ public class TerrainGenerator : MonoBehaviour
         Vector2[] uvs = m_SquareGrid.GetUVs();
         for (int i = 0; i < uvs.Length; i++) {
             uvs[i] /= m_GridScale;
-            uvs[i] /= (m_GridSize - 1);
+            //uvs[i] /= (m_GridSize - 1);
             uvs[i] /= m_UVScale;
 
-            uvs[i] += Vector2.one / 2;
+            uvs[i].x /= m_ChunkArraySize.x;
+            uvs[i].y /= m_ChunkArraySize.y;
+
+            //uvs[i] += Vector2.one / 2;
+            uvs[i] += m_UVOffset;
         }
         m_Mesh.uv = uvs;
 
