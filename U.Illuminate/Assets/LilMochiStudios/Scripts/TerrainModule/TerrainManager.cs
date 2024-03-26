@@ -6,11 +6,13 @@ public class TerrainManager : MonoBehaviour
 {
     [Header("Settings")]
     [SerializeField] private Vector2Int m_GridSize;
-    [SerializeField] private int m_ChunkGridSize;
-    [SerializeField] private float m_ChunkGridScale;
+    [SerializeField] private float m_IsoValue = 1f;
+    [SerializeField] private int m_ChunkGridSize = 40;
+    [SerializeField] private float m_ChunkGridScale = 0.1f;
+
 
     [Header("Elements")]
-    [SerializeField] private TerrainGenerator m_TerrainGeneratorPrefab;
+    [SerializeField] private TerrainChunk m_TerrainChunkPrefab;
 
     private void Start() {
         Generate();
@@ -28,16 +30,11 @@ public class TerrainManager : MonoBehaviour
 
                 // Centre terrain on orgin of the world
                 spawnPosition.x -= (((float)m_GridSize.x / 2) * chunkSize) - chunkSize / 2;
-                spawnPosition.y -= (((float)m_GridSize.y / 2) * chunkSize) - chunkSize / 2;
+                spawnPosition.y -= (((float)m_GridSize.y) * chunkSize) - chunkSize / 2;
 
-                float xOffset = (float)x / m_GridSize.x;
-                float yOffset = (float)y / m_GridSize.y;
+                TerrainChunk terrainGenerator = Instantiate(m_TerrainChunkPrefab, spawnPosition, Quaternion.identity, transform);
 
-                Vector2 uvOffset = new Vector2(xOffset, yOffset);
-
-                TerrainGenerator terrainGenerator = Instantiate(m_TerrainGeneratorPrefab, spawnPosition, Quaternion.identity, transform);
-
-                terrainGenerator.Initialize(m_ChunkGridSize, m_ChunkGridScale, uvOffset, m_GridSize);
+                terrainGenerator.Initialize(m_ChunkGridSize, m_ChunkGridScale, m_IsoValue);
             }
         }
     }

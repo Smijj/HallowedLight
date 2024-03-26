@@ -6,7 +6,8 @@ using UnityEngine;
 
 public struct SquareGrid
 {
-    public Square[,] Squares;
+    private Square[,] m_Squares;
+    public float[,] GridData;
 
     private List<Vector3> m_Vertices;
     private List<int> m_Triangles;
@@ -15,44 +16,55 @@ public struct SquareGrid
     private float m_IsoValue;
     private float m_GridScale;
 
-    public SquareGrid(int size, float gridScale, float isoValue) {
+    public SquareGrid(int gridSize, float gridScale, float isoValue) {
 
-        this.Squares = new Square[size, size];
+        int squareGridSize = gridSize - 1;
+
+        this.m_Squares = new Square[squareGridSize, squareGridSize];
+        this.GridData = new float[gridSize, gridSize];
+        
         this.m_Vertices = new List<Vector3>();
         this.m_Triangles = new List<int>();
         this.m_UVs = new List<Vector2>();
+        
         this.m_IsoValue = isoValue;
         this.m_GridScale = gridScale;
 
-        for (int y = 0; y < size; y++) {
-            for (int x = 0; x < size; x++) {
+        GenerateGridData(gridSize);
 
-                // Create a position based on the xy of the grid amd the GridScale, then centre it
-                Vector2 squarePosition = new Vector2(x, y) * gridScale;
-                squarePosition.x -= (size * gridScale) / 2 - gridScale / 2;
-                squarePosition.y -= (size * gridScale) / 2 - gridScale / 2;
-
-                this.Squares[x, y] = new Square(squarePosition, gridScale);
+        for (int y = 0; y < squareGridSize; y++) {
+            for (int x = 0; x < squareGridSize; x++) {
+                // Create a position using x,y based on the size of the Grid and the GridScale, This is also then centered
+                Vector2 squarePosition = GetWorldPositionFromGridPosition(x, y, squareGridSize);
+                this.m_Squares[x, y] = new Square(squarePosition, gridScale);
             }
         }
     }
 
-    public void Update(float[,] grid) {
+    private void GenerateGridData(float gridSize) {
+        for (int y = 0; y < gridSize; y++) {
+            for (int x = 0; x < gridSize; x++) {
+                GridData[x, y] = m_IsoValue + 0.1f;
+            }
+        }
+    }
+
+    public void Update() {
         this.m_Vertices.Clear();
         this.m_Triangles.Clear();
         this.m_UVs.Clear();
 
         int triangleStartIndex = 0;
 
-        for (int y = 0; y < this.Squares.GetLength(1); y++) {
-            for (int x = 0; x < this.Squares.GetLength(0); x++) {
-                Square currentSquare = this.Squares[x, y];
+        for (int y = 0; y < this.m_Squares.GetLength(1); y++) {
+            for (int x = 0; x < this.m_Squares.GetLength(0); x++) {
+                Square currentSquare = this.m_Squares[x, y];
 
                 float[] values = new float[4];
-                values[0] = grid[x + 1, y + 1];  // Top Right
-                values[1] = grid[x + 1, y];      // Bottom Right
-                values[2] = grid[x, y];          // Bottom Left
-                values[3] = grid[x, y + 1];      // Top Left
+                values[0] = GridData[x + 1, y + 1];  // Top Right
+                values[1] = GridData[x + 1, y];      // Bottom Right
+                values[2] = GridData[x, y];          // Bottom Left
+                values[3] = GridData[x, y + 1];      // Top Left
 
                 // Calculate the Vertices and triangles for the current square
                 currentSquare.Triangulate(m_IsoValue, values);
@@ -68,15 +80,8 @@ public struct SquareGrid
                 this.m_Triangles.AddRange(currentSquareTriangles);
                 triangleStartIndex += currentSquare.GetVertices().Length;
 
-                // Offset UVs so that textures applied to the terrain are correctly displayed
-                Vector2[] uvArray = currentSquare.GetUVs();
-                for (int i = 0; i < uvArray.Length; i++) {
-                    uvArray[i] /= this.Squares.GetLength(0);
-                    uvArray[i] += Vector2.one * this.m_GridScale / 2;
-                }
-
-                // Add offset UV array into SquareGrids UV list
-                this.m_UVs.AddRange(uvArray);
+                // Add UV array into SquareGrids UV list
+                this.m_UVs.AddRange(currentSquare.GetUVs());
             }
         }
     }
@@ -89,5 +94,12 @@ public struct SquareGrid
     }
     public Vector2[] GetUVs() {
         return this.m_UVs.ToArray();
+    }
+
+    private Vector2 GetWorldPositionFromGridPosition(int x, int y, float gridSize) {
+        Vector2 worldPosition = new Vector2(x, y) * m_GridScale;
+        worldPosition.x -= (gridSize * m_GridScale) / 2 - m_GridScale / 2;
+        worldPosition.y -= (gridSize * m_GridScale) / 2 - m_GridScale / 2;
+        return worldPosition;
     }
 }

@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 9023654562941497619}
   - component: {fileID: 9023654562941497618}
   m_Layer: 0
-  m_Name: Terrain Generator
+  m_Name: TerrainChunk
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -134,7 +134,4 @@ MonoBehaviour:
   m_MeshFilter: {fileID: 9023654562615058852}
   m_GridSize: 40
   m_GridScale: 0.1
-  m_IsoValue: 1
   m_UVScale: 0.1
-  m_EnableGizmos: 0
-  m_GizmosSize: 0.1

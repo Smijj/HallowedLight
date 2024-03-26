@@ -1,13 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using Unity.VisualScripting;
+using UnityEngine;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
-public class TerrainGenerator : MonoBehaviour
+public class TerrainChunk : MonoBehaviour
 {
 
     [Header("Brush Settings")]
@@ -22,18 +18,9 @@ public class TerrainGenerator : MonoBehaviour
     [Header("Data")]
     [SerializeField] private int m_GridSize;
     [SerializeField] private float m_GridScale;
-    [SerializeField] private float m_IsoValue;
-    [NaughtyAttributes.OnValueChanged("GenerateMesh")]
     [SerializeField] private float m_UVScale;
-    private Vector2 m_UVOffset;
-    private Vector2Int m_ChunkArraySize;
 
     private SquareGrid m_SquareGrid;
-    private float[,] m_Grid;
-    
-    [Header("Settings")]
-    [SerializeField] private bool m_EnableGizmos = false;
-    [SerializeField] private float m_GizmosSize = 0.5f;
 
 
     private void OnEnable() {
@@ -44,23 +31,13 @@ public class TerrainGenerator : MonoBehaviour
     }
 
 
-    public void Initialize(int gridSize, float gridScale, Vector2 uvOffset, Vector2Int chunkArraySize) {
+    public void Initialize(int gridSize, float gridScale, float isoValue) {
         this.m_GridSize = gridSize;
         this.m_GridScale = gridScale;
-        this.m_UVOffset = uvOffset;
-        this.m_ChunkArraySize = chunkArraySize;
 
         m_Mesh = new Mesh();
 
-        // TODO: Put into the SquareGrid struct
-        m_Grid = new float[m_GridSize, m_GridSize];
-        for (int y = 0; y < m_GridSize; y++) {
-            for (int x = 0; x < m_GridSize; x++) {
-                m_Grid[x, y] = m_IsoValue + 0.1f;
-            }
-        }
-
-        m_SquareGrid = new SquareGrid(m_GridSize - 1, m_GridScale, m_IsoValue);
+        m_SquareGrid = new SquareGrid(m_GridSize, m_GridScale, isoValue);
 
         GenerateMesh();
     }
@@ -68,7 +45,7 @@ public class TerrainGenerator : MonoBehaviour
     private void TouchingCallback(Vector3 worldPosition) {
         worldPosition.z = 0f;
         
-        // For spliting the terrain meshes into chunks, it covnerts the world space pos to a local pos to effect the correct mesh.
+        // For spliting the terrain meshes into chunks, it converts the world space pos to a local pos to effect the correct mesh.
         worldPosition = transform.InverseTransformPoint(worldPosition); 
         Vector2Int gridPosition = GetGridPositionFromWorldPosition(worldPosition);
 
@@ -86,7 +63,7 @@ public class TerrainGenerator : MonoBehaviour
                 float factor = Mathf.Exp(-distance * m_BrushFalloff / m_BrushRadius) * m_BrushStrength;
 
                 // Modify the grid point
-                m_Grid[currentGridPos.x, currentGridPos.y] -= factor;
+                m_SquareGrid.GridData[currentGridPos.x, currentGridPos.y] -= factor;
 
                 // This is to make sure that not all of the terrain meshes in different chunks update even if you clicked nowhere near them.
                 shouldGenerate = true;
@@ -100,22 +77,19 @@ public class TerrainGenerator : MonoBehaviour
     private void GenerateMesh() {
         m_Mesh = new Mesh();
 
-        m_SquareGrid.Update(m_Grid);
+        m_SquareGrid.Update();
 
         m_Mesh.vertices = m_SquareGrid.GetVertices();
         m_Mesh.triangles = m_SquareGrid.GetTriangles();
+        
 
+        // Offset UVs so that textures applied to the terrain are correctly displayed. The order these operations happen is is very important!
         Vector2[] uvs = m_SquareGrid.GetUVs();
         for (int i = 0; i < uvs.Length; i++) {
-            uvs[i] /= m_GridScale;
-            //uvs[i] /= (m_GridSize - 1);
-            uvs[i] /= m_UVScale;
-
-            uvs[i].x /= m_ChunkArraySize.x;
-            uvs[i].y /= m_ChunkArraySize.y;
-
-            //uvs[i] += Vector2.one / 2;
-            uvs[i] += m_UVOffset;
+            uvs[i] /= m_GridSize-1;                             // This scales the uv to be the same size as the chunks mesh. Making the texture be the same size as the chunk
+            uvs[i] += Vector2.one * this.m_GridScale / 2;       // This offsets the uv to make the texture lineup with the mesh
+            uvs[i] /= this.m_GridScale;                         // This scales the uv to account for the GridScale
+            uvs[i] /= m_UVScale;                                // Value that allows for changing the tiling of the UV's from the inspector
         }
         m_Mesh.uv = uvs;
 
@@ -146,22 +120,5 @@ public class TerrainGenerator : MonoBehaviour
         gridPos.x = Mathf.FloorToInt(worldPosition.x / m_GridScale + m_GridSize / 2 - m_GridScale / 2);
         gridPos.y = Mathf.FloorToInt(worldPosition.y / m_GridScale + m_GridSize / 2 - m_GridScale / 2);
         return gridPos;
-    }
-
-    private void OnDrawGizmos() {
-        if (!Application.isPlaying || !m_EnableGizmos) return;
-
-        Gizmos.color = Color.red;
-
-        for (int y = 0;  y < m_Grid.GetLength(1); y++) { 
-            for (int x = 0; x < m_Grid.GetLength(0); x++) {
-                Vector2 worldPosition = GetWorldPositionFromGridPosition(x, y);
-                Gizmos.DrawSphere(worldPosition, m_GridScale / 4);
-
-#if UNITY_EDITOR
-                Handles.Label(worldPosition + Vector2.up * m_GridScale / 3, m_Grid[x, y].ToString("0.0"));
-#endif
-            }
-        }
     }
 }
