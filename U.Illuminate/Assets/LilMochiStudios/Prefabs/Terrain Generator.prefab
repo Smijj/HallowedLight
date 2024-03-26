@@ -135,6 +135,6 @@ MonoBehaviour:
   m_GridSize: 40
   m_GridScale: 0.1
   m_IsoValue: 1
-  m_UVScale: 1
+  m_UVScale: 0.1
   m_EnableGizmos: 0
   m_GizmosSize: 0.1
