@@ -27,6 +27,7 @@ public struct SquareGrid
         for (int y = 0; y < size; y++) {
             for (int x = 0; x < size; x++) {
 
+                // Create a position based on the xy of the grid amd the GridScale, then centre it
                 Vector2 squarePosition = new Vector2(x, y) * gridScale;
                 squarePosition.x -= (size * gridScale) / 2 - gridScale / 2;
                 squarePosition.y -= (size * gridScale) / 2 - gridScale / 2;
