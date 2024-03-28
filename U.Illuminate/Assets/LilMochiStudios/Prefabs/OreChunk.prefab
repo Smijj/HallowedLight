@@ -61,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e75f8109fc0aa614daf610bee11a6b41, type: 2}
+  - {fileID: 2100000, guid: f3f254970b5010c40b0db0ca3e715491, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -92,9 +92,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9023654562941497619}
-  - component: {fileID: 9023654562941497618}
+  - component: {fileID: 7044591549458194784}
   m_Layer: 0
-  m_Name: TerrainChunk
+  m_Name: OreChunk
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -116,7 +116,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &9023654562941497618
+--- !u!114 &7044591549458194784
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -125,7 +125,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 9023654562941497616}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 719c4908148e1ab45a1306f1d14e7c1a, type: 3}
+  m_Script: {fileID: 11500000, guid: 5b511789da9c07c4f8864630a0d43080, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrushRadius: 2
@@ -134,5 +134,5 @@ MonoBehaviour:
   m_MeshFilter: {fileID: 9023654562615058852}
   m_MeshRenderer: {fileID: 9023654562615058855}
   m_GridSize: 40
-  m_GridScale: 0.1
-  m_UVScale: 0.1
+  m_GridScale: 0.05
+  m_UVScale: 0.2

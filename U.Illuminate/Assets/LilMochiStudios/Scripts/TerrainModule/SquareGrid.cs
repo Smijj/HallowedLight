@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public struct SquareGrid
@@ -41,10 +39,30 @@ public struct SquareGrid
         }
     }
 
-    private void GenerateGridData(float gridSize) {
+    private void GenerateGridData(int gridSize) {
         for (int y = 0; y < gridSize; y++) {
             for (int x = 0; x < gridSize; x++) {
                 GridData[x, y] = m_IsoValue + 0.1f;
+            }
+        }
+    }
+    public void GenerateCircleGridData(int gridSize) {
+        for (int y = 0; y < gridSize; y++) {
+            for (int x = 0; x < gridSize; x++) {
+
+                // Calculate how much we should edit a particular grid point based on the distance from where the player clicked
+                float distance = Vector2.Distance(new Vector2Int(gridSize/2, gridSize/2), new Vector2Int(x, y));
+                float factor = Mathf.Exp(-distance * 4 / gridSize) * gridSize/6;
+                //Debug.Log($"Position: {x}, {y}. Factor: {factor}");
+                
+                GridData[x, y] = factor;
+            }
+        }
+    }
+    public void GenerateRandomGridData(float gridSize) {
+        for (int y = 0; y < gridSize; y++) {
+            for (int x = 0; x < gridSize; x++) {
+                GridData[x, y] = Random.Range(0f, m_IsoValue) + 0.1f;
             }
         }
     }

@@ -13,14 +13,15 @@ public class TerrainChunk : MonoBehaviour
 
     [Header("Elements")]
     [SerializeField] private MeshFilter m_MeshFilter;
-    private Mesh m_Mesh;
+    [SerializeField] protected MeshRenderer m_MeshRenderer;
+    protected Mesh m_Mesh;
 
     [Header("Data")]
-    [SerializeField] private int m_GridSize;
-    [SerializeField] private float m_GridScale;
-    [SerializeField] private float m_UVScale;
+    [SerializeField] protected int m_GridSize;
+    [SerializeField] protected float m_GridScale;
+    [SerializeField] protected float m_UVScale;
 
-    private SquareGrid m_SquareGrid;
+    protected SquareGrid m_SquareGrid;
 
 
     private void OnEnable() {
@@ -30,12 +31,12 @@ public class TerrainChunk : MonoBehaviour
         InputManager.OnTouching -= TouchingCallback;
     }
 
-
-    public void Initialize(int gridSize, float gridScale, float isoValue) {
+    public virtual void Initialize(int gridSize, float gridScale, float isoValue, Material material) {
         this.m_GridSize = gridSize;
         this.m_GridScale = gridScale;
 
         m_Mesh = new Mesh();
+        if (m_MeshRenderer) m_MeshRenderer.material = material;
 
         m_SquareGrid = new SquareGrid(m_GridSize, m_GridScale, isoValue);
 
@@ -74,14 +75,13 @@ public class TerrainChunk : MonoBehaviour
             GenerateMesh();
     }
 
-    private void GenerateMesh() {
+    protected void GenerateMesh() {
         m_Mesh = new Mesh();
 
         m_SquareGrid.Update();
 
         m_Mesh.vertices = m_SquareGrid.GetVertices();
         m_Mesh.triangles = m_SquareGrid.GetTriangles();
-        
 
         // Offset UVs so that textures applied to the terrain are correctly displayed. The order these operations happen is is very important!
         Vector2[] uvs = m_SquareGrid.GetUVs();
@@ -109,12 +109,6 @@ public class TerrainChunk : MonoBehaviour
         return gridPosition.x >= 0f && gridPosition.x < m_GridSize && gridPosition.y >= 0f && gridPosition.y < m_GridSize;
     }
 
-    private Vector2 GetWorldPositionFromGridPosition(int x, int y) {
-        Vector2 worldPosition = new Vector2(x, y) * m_GridScale;
-        worldPosition.x -= (m_GridSize * m_GridScale) / 2 - m_GridScale / 2;
-        worldPosition.y -= (m_GridSize * m_GridScale) / 2 - m_GridScale / 2;
-        return worldPosition;
-    }
     private Vector2Int GetGridPositionFromWorldPosition(Vector2 worldPosition) {
         Vector2Int gridPos = new Vector2Int();
         gridPos.x = Mathf.FloorToInt(worldPosition.x / m_GridScale + m_GridSize / 2 - m_GridScale / 2);
