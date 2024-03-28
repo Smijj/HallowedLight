@@ -129,10 +129,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrushRadius: 2
-  m_BrushStrength: 0.5
-  m_BrushFalloff: 4
+  m_BrushStrength: 0.6
+  m_BrushFalloff: 3
   m_MeshFilter: {fileID: 9023654562615058852}
   m_MeshRenderer: {fileID: 9023654562615058855}
   m_GridSize: 40
-  m_GridScale: 0.05
-  m_UVScale: 0.2
+  m_GridScale: 0.1
+  m_UVScale: 0.1
+  m_IsoValue: 0
+  m_MaterialData: {fileID: 0}
