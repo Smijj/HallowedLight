@@ -838,7 +838,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 924474911}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.23, y: 1.25, z: 0}
   m_LocalScale: {x: 0.05, y: 0.05, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1137,9 +1137,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1304373363}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.03, y: 4.72, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: 1.73, y: 1.53, z: 0}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 9
@@ -1414,7 +1414,7 @@ MonoBehaviour:
     OreSpawnTable:
     - SpawnChance: 0.1
       MaterialData: {fileID: 11400000, guid: 32b976d032172764a917b0bd6cc71aa3, type: 2}
-    - SpawnChance: 0.3
+    - SpawnChance: 0.5
       MaterialData: {fileID: 11400000, guid: c0d72975f02079d41b6cd74223a57de0, type: 2}
   m_IsoValue: 1
   m_ChunkGridSize: 33

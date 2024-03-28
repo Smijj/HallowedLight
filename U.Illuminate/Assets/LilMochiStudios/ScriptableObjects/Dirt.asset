@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b75a84aff7a517a45b289c900aabf37e, type: 3}
   m_Name: Dirt
   m_EditorClassIdentifier: 
-  Hardness: 1
   Material: {fileID: 2100000, guid: 3e970d1aefbd3e04ba3e13f0f7b16716, type: 2}
+  Hardness: 1
+  SizeRange: 0.1

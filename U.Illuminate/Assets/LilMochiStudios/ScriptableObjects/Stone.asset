@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b75a84aff7a517a45b289c900aabf37e, type: 3}
   m_Name: Stone
   m_EditorClassIdentifier: 
-  Hardness: 30
   Material: {fileID: 2100000, guid: e75f8109fc0aa614daf610bee11a6b41, type: 2}
+  Hardness: 8
+  SizeRange: 1

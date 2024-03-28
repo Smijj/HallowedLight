@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b75a84aff7a517a45b289c900aabf37e, type: 3}
   m_Name: Illumanium
   m_EditorClassIdentifier: 
-  Hardness: 30
   Material: {fileID: 2100000, guid: f3f254970b5010c40b0db0ca3e715491, type: 2}
+  Hardness: 30
+  SizeRange: 2

@@ -47,7 +47,7 @@ namespace LilMochiStudios.TerrainModule {
                 }
             }
         }
-        public void GenerateCircleGridData(int gridSize, float circleSize = 4) {
+        public void GenerateCircleGridData(int gridSize, float circleSize = 3) {
             for (int y = 0; y < gridSize; y++) {
                 for (int x = 0; x < gridSize; x++) {
 
@@ -60,13 +60,20 @@ namespace LilMochiStudios.TerrainModule {
                 }
             }
         }
-        public void GenerateRandomShapeGridData(int gridSize, float shapeSize = 4) {
+        public void GenerateRandomShapeGridData(int gridSize, float shapeSize = 3) {
+
+            int randomVarianceRange = Random.Range(0, gridSize/Random.Range(2, 5));
+            int randomX = Random.Range((gridSize / 2) - randomVarianceRange / 2, (gridSize / 2) + randomVarianceRange / 2);
+            int randomY = Random.Range((gridSize / 2) - randomVarianceRange / 2, (gridSize / 2) + randomVarianceRange / 2);
+            Vector2Int centerPoint = new Vector2Int(randomX, randomY);
+
             for (int y = 0; y < gridSize; y++) {
                 for (int x = 0; x < gridSize; x++) {
 
                     // Calculate how much we should edit a particular grid point based on the distance from where the player clicked
-                    float distance = Vector2.Distance(new Vector2Int(gridSize / 2, gridSize / 2), new Vector2Int(x, y));
-                    float factor = Mathf.Exp(-distance * 4 / gridSize) * (gridSize * m_GridScale) / 6;
+                    Vector2Int currentPoint = new Vector2Int(Random.Range(x - randomVarianceRange, x + randomVarianceRange), Random.Range(y - randomVarianceRange, y + randomVarianceRange));
+                    float distance = Vector2.Distance(centerPoint, currentPoint);
+                    float factor = Mathf.Exp(-distance * Random.Range(shapeSize - shapeSize/2, shapeSize*2) / gridSize) * (gridSize * m_GridScale) / 5;
                     //Debug.Log($"Position: {x}, {y}. Factor: {factor}");
 
                     GridData[x, y] = factor;

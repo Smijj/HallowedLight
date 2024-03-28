@@ -47,9 +47,9 @@ namespace LilMochiStudios.TerrainModule {
             m_Mesh = new Mesh();
             if (m_MeshRenderer && materialData) m_MeshRenderer.material = materialData.Material;
 
-            InitializeGrid();
+            InitializeGrid(materialData);
         }
-        public virtual void InitializeGrid() {
+        public virtual void InitializeGrid(MaterialDataSO materialData) {
             m_SquareGrid = new SquareGrid(m_GridSize, m_GridScale, m_IsoValue);
             GenerateMesh();
         }

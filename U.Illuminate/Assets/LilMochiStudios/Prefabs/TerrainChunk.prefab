@@ -128,9 +128,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 847a3cceba40b95438991394fb7b60ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_BrushRadius: 4
-  m_BrushStrength: 0.6
-  m_BrushFalloff: 5
+  m_BrushRadius: 5
+  m_BrushStrength: 0.8
+  m_BrushFalloff: 6
   m_MeshFilter: {fileID: 9023654562615058852}
   m_MeshRenderer: {fileID: 9023654562615058855}
   m_GridSize: 0
