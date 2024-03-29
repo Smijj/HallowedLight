@@ -4,13 +4,16 @@ using UnityEngine;
 
 namespace LilMochiStudios.TerrainModule {
     public class TerrainManager : MonoBehaviour {
-        [Header("Settings")]
-        [SerializeField] private Vector2Int m_GridSize;
+        
+        [Header("World Settings")]
         [SerializeField] private int m_WorldSizeX = 50;
         [SerializeField] private List<TerrainLayerData> m_TerrainLayerData;
+        
+        [Header("Chunk Settings")]
         [SerializeField] private float m_IsoValue = 1f;
-        [SerializeField] private int m_ChunkGridSize = 40;
-        [SerializeField] private float m_ChunkGridScale = 0.1f;
+        [SerializeField] private float m_UVScale = 0.1f;
+        [SerializeField] private int m_ChunkGridSize = 33;
+        [SerializeField] private float m_ChunkGridScale = 0.25f;
 
 
         [Header("Elements")]
@@ -44,7 +47,7 @@ namespace LilMochiStudios.TerrainModule {
 
                         // Instantiate and Initialize the TerrainChunk
                         Chunk terrainChunk = Instantiate(m_TerrainChunkPrefab, spawnPosition, Quaternion.identity, m_TerrainParent);
-                        terrainChunk.Initialize(m_ChunkGridSize, m_ChunkGridScale, m_IsoValue, m_TerrainLayerData[w].MaterialData);
+                        terrainChunk.Initialize(m_ChunkGridSize, m_ChunkGridScale, m_IsoValue, m_UVScale, m_TerrainLayerData[w].MaterialData);
 
                         GenerateOre(m_TerrainLayerData[w], spawnPosition, terrainChunk);
                     }
@@ -60,7 +63,7 @@ namespace LilMochiStudios.TerrainModule {
                 if (Random.Range(0f, 1f) < ore.SpawnChance) {
                     // Instantiate and Initialize the OreChunk
                     Chunk OreChunk = Instantiate(m_OreChunkPrefab, spawnPosition, Quaternion.identity, m_OreParent);
-                    OreChunk.Initialize(m_ChunkGridSize, m_ChunkGridScale, m_IsoValue, ore.MaterialData);
+                    OreChunk.Initialize(m_ChunkGridSize, m_ChunkGridScale, m_IsoValue, m_UVScale, ore.MaterialData);
 
                     // Remove terrain from behind OreChunk
                     terrainChunk.RemoveTerrain(OreChunk.GetGridData());

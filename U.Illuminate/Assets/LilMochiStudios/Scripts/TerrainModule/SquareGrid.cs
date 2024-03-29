@@ -7,7 +7,7 @@ namespace LilMochiStudios.TerrainModule {
         private Square[,] m_Squares;
         public float[,] GridData;
 
-        private List<Vector3> m_Vertices;
+        private List<Vector2> m_Vertices;
         private List<int> m_Triangles;
         private List<Vector2> m_UVs;
 
@@ -21,7 +21,7 @@ namespace LilMochiStudios.TerrainModule {
             this.m_Squares = new Square[squareGridSize, squareGridSize];
             this.GridData = new float[gridSize, gridSize];
 
-            this.m_Vertices = new List<Vector3>();
+            this.m_Vertices = new List<Vector2>();
             this.m_Triangles = new List<int>();
             this.m_UVs = new List<Vector2>();
 
@@ -125,7 +125,7 @@ namespace LilMochiStudios.TerrainModule {
             }
         }
 
-        public Vector3[] GetVertices() {
+        public Vector2[] GetVertices() {
             return this.m_Vertices.ToArray();
         }
         public int[] GetTriangles() {

@@ -6,13 +6,15 @@ using UnityEngine;
 namespace LilMochiStudios.PlayerModule {
     public class PlayerCtrl : MonoBehaviour
     {
-        [Header("Settings")]
+        [Header("Movement Settings")]
         [SerializeField] private float m_MoveSpeed = 1;
         [SerializeField] private float m_JumpForce = 3;
 
         private Rigidbody rb;
-
         private Vector2 m_Input;
+
+
+
 
         private void Start() {
             rb = GetComponent<Rigidbody>();

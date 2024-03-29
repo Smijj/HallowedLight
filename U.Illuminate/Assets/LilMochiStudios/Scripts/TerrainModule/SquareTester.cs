@@ -46,7 +46,7 @@ namespace LilMochiStudios.TerrainModule {
             Square square = new Square(Vector3.zero, m_Gridscale);
             square.Triangulate(m_IsoValue, new float[] { m_TopRightValue, m_BottomRightValue, m_BottomLeftValue, m_TopLeftValue });
 
-            mesh.vertices = square.GetVertices();
+            //mesh.vertices = square.GetVertices();
             mesh.triangles = square.GetTriangles();
 
             m_MeshFilter.mesh = mesh;

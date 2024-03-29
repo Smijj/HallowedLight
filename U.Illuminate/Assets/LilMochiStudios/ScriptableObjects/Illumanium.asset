@@ -15,3 +15,6 @@ MonoBehaviour:
   Material: {fileID: 2100000, guid: f3f254970b5010c40b0db0ca3e715491, type: 2}
   Hardness: 30
   SizeRange: 2
+  BrushRadius: 5
+  BrushStrength: 1
+  BrushFalloff: 6
