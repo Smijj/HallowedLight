@@ -136,13 +136,7 @@ namespace LilMochiStudios.TerrainModule {
 
             m_SquareGrid.Update();
 
-            Vector2[] vertices = m_SquareGrid.GetVertices();
-            List<Vector3> vertices3 = new List<Vector3>();
-            for (int i = 0; i < vertices.Length; i++) {
-                vertices3.Add((Vector3)vertices[i]);
-            }
-
-            m_Mesh.vertices = vertices3.ToArray();
+            m_Mesh.vertices = m_SquareGrid.GetVerticesV3();
             m_Mesh.triangles = m_SquareGrid.GetTriangles();
 
             // Offset UVs so that textures applied to the terrain are correctly displayed. The order these operations happen is is very important!
@@ -161,16 +155,21 @@ namespace LilMochiStudios.TerrainModule {
         }
 
         private void GenerateCollider() {
-            //if (m_MeshFilter.TryGetComponent(out MeshCollider meshCollider))
-            //    meshCollider.sharedMesh = m_Mesh;
-            //else
-            //    m_MeshFilter.AddComponent<MeshCollider>().sharedMesh = m_Mesh;
-
-
-            if (m_MeshFilter.TryGetComponent(out PolygonCollider2D polyCollider))
-                polyCollider.points = m_SquareGrid.GetVertices();
+            if (m_MeshFilter.TryGetComponent(out MeshCollider meshCollider))
+                meshCollider.sharedMesh = m_Mesh;
             else
-                m_MeshFilter.AddComponent<PolygonCollider2D>().points = m_SquareGrid.GetVertices();
+                m_MeshFilter.AddComponent<MeshCollider>().sharedMesh = m_Mesh;
+
+
+            /// MEMORY LEAK maybe
+            //if (m_MeshFilter.TryGetComponent(out EdgeCollider2D polyCollider))
+            //    polyCollider.points  =m_SquareGrid.GetEdgeVertices();
+            //else
+            //    m_MeshFilter.AddComponent<EdgeCollider2D>().points = m_SquareGrid.GetEdgeVertices();
+
+            //foreach (var item in m_SquareGrid.GetEdgeVertices()) {
+            //    Debug.Log(item);
+            //}
         }
 
         private bool IsValidGridPosition(Vector2Int gridPosition) {

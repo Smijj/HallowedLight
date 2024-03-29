@@ -13,6 +13,7 @@ namespace LilMochiStudios.TerrainModule {
 
         private float m_IsoValue;
         private float m_GridScale;
+        private int m_GridSize;
 
         public SquareGrid(int gridSize, float gridScale, float isoValue) {
 
@@ -27,6 +28,7 @@ namespace LilMochiStudios.TerrainModule {
 
             this.m_IsoValue = isoValue;
             this.m_GridScale = gridScale;
+            this.m_GridSize = gridSize;
 
             GenerateGridData(gridSize);
 
@@ -62,7 +64,7 @@ namespace LilMochiStudios.TerrainModule {
         }
         public void GenerateRandomShapeGridData(int gridSize, float shapeSize = 3) {
 
-            int randomVarianceRange = Random.Range(0, gridSize/Random.Range(2, 5));
+            int randomVarianceRange = Random.Range(0, gridSize / Random.Range(2, 5));
             int randomX = Random.Range((gridSize / 2) - randomVarianceRange / 2, (gridSize / 2) + randomVarianceRange / 2);
             int randomY = Random.Range((gridSize / 2) - randomVarianceRange / 2, (gridSize / 2) + randomVarianceRange / 2);
             Vector2Int centerPoint = new Vector2Int(randomX, randomY);
@@ -73,14 +75,14 @@ namespace LilMochiStudios.TerrainModule {
                     // Calculate how much we should edit a particular grid point based on the distance from where the player clicked
                     Vector2Int currentPoint = new Vector2Int(Random.Range(x - randomVarianceRange, x + randomVarianceRange), Random.Range(y - randomVarianceRange, y + randomVarianceRange));
                     float distance = Vector2.Distance(centerPoint, currentPoint);
-                    float factor = Mathf.Exp(-distance * Random.Range(shapeSize - shapeSize/2, shapeSize*2) / gridSize) * (gridSize * m_GridScale) / 5;
+                    float factor = Mathf.Exp(-distance * Random.Range(shapeSize - shapeSize / 2, shapeSize * 2) / gridSize) * (gridSize * m_GridScale) / 5;
                     //Debug.Log($"Position: {x}, {y}. Factor: {factor}");
 
                     GridData[x, y] = factor;
                 }
             }
         }
-        public void GenerateRandomGridData(float gridSize) {
+        public void GenerateRandomGridData(int gridSize) {
             for (int y = 0; y < gridSize; y++) {
                 for (int x = 0; x < gridSize; x++) {
                     GridData[x, y] = Random.Range(0f, m_IsoValue * 2);
@@ -128,14 +130,50 @@ namespace LilMochiStudios.TerrainModule {
         public Vector2[] GetVertices() {
             return this.m_Vertices.ToArray();
         }
+        /// <summary>
+        /// Returns the vertices of the SquareGrid as a Vector3 Array.
+        /// </summary>
+        /// <returns></returns>
+        public Vector3[] GetVerticesV3() {
+            List<Vector3> verticesV3 = new List<Vector3>();
+            for (int i = 0; i < this.m_Vertices.Count; i++) {
+                verticesV3.Add((Vector3)this.m_Vertices[i]);
+            }
+            return verticesV3.ToArray();
+        }
+        public Vector2[] GetEdgeVertices() {
+            List<Vector2> edgeVertices = new List<Vector2>();
+
+            for (int y = 0; y < m_GridSize; y++) {
+                for (int x = 0; x < m_GridSize; x++) {
+                    if (GridData[x, y] < m_IsoValue) continue;  // Isn't part of an edge
+
+                    // Check grid positions adjacent points if they are less then the iso value, if so this is an edge vertice.
+                    if (!IsValidGridPosition(x - 1, y, m_GridSize) || 
+                        GridData[x - 1, y] < m_IsoValue ||
+                        !IsValidGridPosition(x, y + 1, m_GridSize) ||
+                        GridData[x, y + 1] < m_IsoValue ||
+                        !IsValidGridPosition(x + 1, y, m_GridSize) ||
+                        GridData[x + 1, y] < m_IsoValue ||
+                        !IsValidGridPosition(x, y - 1, m_GridSize) ||
+                        GridData[x, y - 1] < m_IsoValue) 
+                        {
+                        edgeVertices.Add(GetWorldPositionFromGridPosition(x, y, m_GridSize));
+                    }
+                }
+            }
+
+            return edgeVertices.ToArray();
+        }
         public int[] GetTriangles() {
             return this.m_Triangles.ToArray();
         }
         public Vector2[] GetUVs() {
             return this.m_UVs.ToArray();
         }
-
-
+        private bool IsValidGridPosition(int x, int y, int gridSize) {
+            return x >= 0f && x < gridSize && y >= 0f && y < gridSize;
+        }
         private Vector2 GetWorldPositionFromGridPosition(int x, int y, float gridSize) {
             Vector2 worldPosition = new Vector2(x, y) * m_GridScale;
             worldPosition.x -= (gridSize * m_GridScale) / 2 - m_GridScale / 2;

@@ -39,6 +39,8 @@ public class InputManager : MonoBehaviour
         if (hit.collider == null) return;
 
         OnTouching?.Invoke(hit.point);
+        
+        
 
         //Vector3 worldPoint = m_Camera.ScreenToWorldPoint(Input.mousePosition);
         //Debug.Log($"Hit Point: {hit.point}\nWorldPoint: {worldPoint}");
