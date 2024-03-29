@@ -305,6 +305,91 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &151593204
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 6403182229869408683, guid: 347c3bcc091542746b653698bc2df579, type: 3}
+      propertyPath: m_UVScale
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6403182229869408683, guid: 347c3bcc091542746b653698bc2df579, type: 3}
+      propertyPath: m_GridSize
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6403182229869408683, guid: 347c3bcc091542746b653698bc2df579, type: 3}
+      propertyPath: m_IsoValue
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6403182229869408683, guid: 347c3bcc091542746b653698bc2df579, type: 3}
+      propertyPath: m_GridScale
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6403182229869408683, guid: 347c3bcc091542746b653698bc2df579, type: 3}
+      propertyPath: m_MaterialData
+      value: 
+      objectReference: {fileID: 11400000, guid: 0744d47d8b5a3764592918410cd4591d, type: 2}
+    - target: {fileID: 6403182229869408683, guid: 347c3bcc091542746b653698bc2df579, type: 3}
+      propertyPath: m_InitializeOnStart
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9023654562941497616, guid: 347c3bcc091542746b653698bc2df579, type: 3}
+      propertyPath: m_Name
+      value: TerrainChunk
+      objectReference: {fileID: 0}
+    - target: {fileID: 9023654562941497616, guid: 347c3bcc091542746b653698bc2df579, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9023654562941497619, guid: 347c3bcc091542746b653698bc2df579, type: 3}
+      propertyPath: m_RootOrder
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 9023654562941497619, guid: 347c3bcc091542746b653698bc2df579, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.22
+      objectReference: {fileID: 0}
+    - target: {fileID: 9023654562941497619, guid: 347c3bcc091542746b653698bc2df579, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.31
+      objectReference: {fileID: 0}
+    - target: {fileID: 9023654562941497619, guid: 347c3bcc091542746b653698bc2df579, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9023654562941497619, guid: 347c3bcc091542746b653698bc2df579, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9023654562941497619, guid: 347c3bcc091542746b653698bc2df579, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9023654562941497619, guid: 347c3bcc091542746b653698bc2df579, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9023654562941497619, guid: 347c3bcc091542746b653698bc2df579, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9023654562941497619, guid: 347c3bcc091542746b653698bc2df579, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9023654562941497619, guid: 347c3bcc091542746b653698bc2df579, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9023654562941497619, guid: 347c3bcc091542746b653698bc2df579, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 347c3bcc091542746b653698bc2df579, type: 3}
 --- !u!1 &265356676
 GameObject:
   m_ObjectHideFlags: 0
@@ -699,7 +784,7 @@ Rigidbody:
   m_Mass: 1
   m_Drag: 0.5
   m_AngularDrag: 0.05
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 120
@@ -1011,6 +1096,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a67a39f5e9c269a449c68da9890aa7a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_LaserRange: 10
 --- !u!1 &1080250831
 GameObject:
   m_ObjectHideFlags: 0
@@ -1433,9 +1519,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dfeb7033215f7f4ea6d785b5b0ac990, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_WorldSizeX: 50
+  m_WorldSizeX: 10
   m_TerrainLayerData:
-  - Depth: 15
+  - Depth: 10
     MaterialData: {fileID: 11400000, guid: 0744d47d8b5a3764592918410cd4591d, type: 2}
     OreSpawnTable:
     - SpawnChance: 0.1
