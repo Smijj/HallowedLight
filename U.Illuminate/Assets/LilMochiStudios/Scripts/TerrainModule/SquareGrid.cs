@@ -7,6 +7,7 @@ namespace LilMochiStudios.TerrainModule {
         
         private Square[,] m_Squares;
         public float[,] GridData;
+        public float TotalGridDataValue;
 
         private List<Vector2> m_Vertices;
         private List<int> m_Triangles;
@@ -30,7 +31,8 @@ namespace LilMochiStudios.TerrainModule {
             this.m_IsoValue = isoValue;
             this.m_GridScale = gridScale;
             this.m_GridSize = gridSize;
-
+            this.TotalGridDataValue = 0;
+            
             GenerateGridData(gridSize);
 
             for (int y = 0; y < squareGridSize; y++) {
@@ -43,14 +45,18 @@ namespace LilMochiStudios.TerrainModule {
         }
 
         private void GenerateGridData(int gridSize) {
+            float gridValue = 0;
             for (int y = 0; y < gridSize; y++) {
                 for (int x = 0; x < gridSize; x++) {
                     //GridData[x, y] = m_IsoValue + 0.1f;
                     GridData[x, y] = m_IsoValue * 2;
+                    gridValue += GridData[x, y] - m_IsoValue;
                 }
             }
+            TotalGridDataValue = gridValue;
         }
         public void GenerateCircleGridData(int gridSize, float circleSize = 3) {
+            float gridValue = 0;
             for (int y = 0; y < gridSize; y++) {
                 for (int x = 0; x < gridSize; x++) {
 
@@ -60,10 +66,14 @@ namespace LilMochiStudios.TerrainModule {
                     //Debug.Log($"Position: {x}, {y}. Factor: {factor}");
 
                     GridData[x, y] = factor;
+                    if (factor > m_IsoValue) gridValue += GridData[x, y] - m_IsoValue;
+
                 }
             }
+            TotalGridDataValue = gridValue;
         }
         public void GenerateRandomShapeGridData(int gridSize, float shapeSize = 3) {
+            float gridValue = 0;
 
             int randomVarianceRange = Random.Range(0, gridSize / Random.Range(2, 5));
             int randomX = Random.Range((gridSize / 2) - randomVarianceRange / 2, (gridSize / 2) + randomVarianceRange / 2);
@@ -80,8 +90,10 @@ namespace LilMochiStudios.TerrainModule {
                     //Debug.Log($"Position: {x}, {y}. Factor: {factor}");
 
                     GridData[x, y] = factor;
+                    if (factor > m_IsoValue) gridValue += GridData[x, y] - m_IsoValue;
                 }
             }
+            TotalGridDataValue = gridValue;
         }
         public void GenerateRandomGridData(int gridSize) {
             for (int y = 0; y < gridSize; y++) {

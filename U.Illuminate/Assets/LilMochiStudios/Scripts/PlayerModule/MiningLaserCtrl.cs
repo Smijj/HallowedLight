@@ -1,7 +1,8 @@
+using LilMochiStudios.TerrainModule;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst.CompilerServices;
 using UnityEngine;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 
 namespace LilMochiStudios.PlayerModule {
     public class MiningLaserCtrl : MonoBehaviour
@@ -9,12 +10,37 @@ namespace LilMochiStudios.PlayerModule {
 
         [Header("Settings")]
         [SerializeField] private float m_LaserRange = 10f;
+        [SerializeField] private float m_LaserWidth = 0.01f;
+        [SerializeField] private LayerMask m_DestructableLayerMask;
+        
+        [Header("Elements")]
+        [SerializeField] private LineRenderer m_LaserLine;
+        [SerializeField] private Transform m_LaserTransform;
+        [SerializeField] private Transform m_PlayerTransform;
+        [SerializeField] private OreDropCtrl m_OreDropPrefab;
 
         private bool m_Clicking;
+        private Vector2 m_TargetPosition;
         private Camera m_Camera;
+
+
+        private void OnEnable() {
+            States.DestructableState.OnDestructableDropItem += SpawnOreDrop;
+        }
+        private void OnDisable() {
+            States.DestructableState.OnDestructableDropItem -= SpawnOreDrop;
+        }
 
         void Start() {
             m_Camera = Camera.main;
+            if (!m_LaserTransform) m_LaserTransform = this.transform;
+
+            if (m_LaserLine) {
+                m_LaserLine.SetPosition(0, Vector3.zero);
+                m_LaserLine.SetPosition(1, Vector3.zero);
+                m_LaserLine.startWidth = m_LaserWidth;
+                m_LaserLine.endWidth = m_LaserWidth;
+            }
         }
 
         private void Update() {
@@ -26,32 +52,62 @@ namespace LilMochiStudios.PlayerModule {
                 Clicking();
             } else if (Input.GetMouseButtonUp(0) && m_Clicking) {
                 m_Clicking = false;
+                DeactivateLaser();
             }
+        }
 
-
-            Debug.DrawRay(transform.position, transform.right, Color.red);
+        private void SpawnOreDrop(MaterialDataSO material) {
+            OreDropCtrl oreDrop = Instantiate(m_OreDropPrefab, m_TargetPosition, Quaternion.identity);
+            oreDrop.Initialize(transform, material);
         }
 
         private void Clicking() {
 
             RaycastHit hit;
-            Ray ray = new Ray(transform.position, transform.right);
-            Physics.Raycast(ray, out hit, m_LaserRange);
+            Physics.Raycast(m_Camera.ScreenPointToRay(Input.mousePosition), out hit, 50f);
+            
+            // Has the player clicked on something destructable?
+            if (hit.collider == null) {
+                DeactivateLaser();
+                return;
+            }
+            // Is that destructable thing within range of the player?
+            if (Vector3.Distance(hit.point, m_PlayerTransform.position) > m_LaserRange) {
+                DeactivateLaser();
+                return;
+            }
 
-            if (hit.collider == null) return;
+            m_TargetPosition = hit.point;
 
-            States.MiningState.OnMiningLaserContact?.Invoke(hit.point);
+            // Draw laser line
+            ActivateLaser(hit.point);
 
-            //Vector3 worldPoint = m_Camera.ScreenToWorldPoint(Input.mousePosition);
-            //Debug.Log($"Hit Point: {hit.point}\nWorldPoint: {worldPoint}");
+            // Invoke mining event
+            States.DestructableState.OnDestructableContact?.Invoke(hit.point);
         }
 
         private void RotateToMousePosition() {
             Vector2 mousePosition = m_Camera.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 directionToMouse = mousePosition - (Vector2)transform.position;
+            Vector2 directionToMouse = mousePosition - (Vector2)m_LaserTransform.position;
 
             float angle = Mathf.Atan2(directionToMouse.y, directionToMouse.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+            m_LaserTransform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
         }
+
+        private void ActivateLaser(Vector3 laserTargetInWorldSpace) {
+            Vector2 laserTarget = m_LaserLine.transform.InverseTransformPoint(laserTargetInWorldSpace);
+            m_LaserLine.SetPosition(1, laserTarget);
+
+            // Position and turn on point light
+
+            // Spawn particle effects
+        }
+
+        private void DeactivateLaser() {
+            m_LaserLine.SetPosition(1, Vector3.zero);
+
+            // turn off point light
+        }
+
     }
 }

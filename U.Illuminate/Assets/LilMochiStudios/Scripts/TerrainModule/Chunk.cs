@@ -21,6 +21,9 @@ namespace LilMochiStudios.TerrainModule {
         [SerializeField] protected float m_IsoValue;
         [SerializeField] protected MaterialDataSO m_MaterialData;
 
+        [SerializeField] protected float m_GridValueRemoved = 0f;
+
+
         protected SquareGrid m_SquareGrid;
 
 
@@ -30,11 +33,11 @@ namespace LilMochiStudios.TerrainModule {
         }
         private void OnEnable() {
             //InputManager.OnTouching += OnMiningLaserContact;
-            PlayerModule.States.MiningState.OnMiningLaserContact += OnMiningLaserContact;
+            PlayerModule.States.DestructableState.OnDestructableContact += OnMiningLaserContact;
         }
         private void OnDisable() {
             //InputManager.OnTouching -= OnMiningLaserContact;
-            PlayerModule.States.MiningState.OnMiningLaserContact -= OnMiningLaserContact;
+            PlayerModule.States.DestructableState.OnDestructableContact -= OnMiningLaserContact;
         }
         private void Start() {
             if (m_InitializeOnStart) Initialize(m_GridSize, m_GridScale, m_IsoValue, m_UVScale, m_MaterialData);
@@ -101,7 +104,7 @@ namespace LilMochiStudios.TerrainModule {
 
         #region Private
 
-        private void DestroyTerrain(Vector2Int gridPosition) {
+        public virtual void DestroyTerrain(Vector2Int gridPosition) {
             bool shouldGenerate = false;
 
             for (int y = gridPosition.y - m_MaterialData.BrushRadius / 2; y <= gridPosition.y + m_MaterialData.BrushRadius / 2; y++) {
@@ -115,11 +118,11 @@ namespace LilMochiStudios.TerrainModule {
                     float distance = Vector2.Distance(currentGridPos, gridPosition);
 
                     float strength = m_MaterialData.BrushStrength / m_MaterialData.Hardness;
-                    //if (m_SquareGrid.GridData[currentGridPos.x, currentGridPos.y] < m_IsoValue) strength = m_MaterialData.BrushStrength;
                     float factor = Mathf.Exp(-distance * m_MaterialData.BrushFalloff / m_MaterialData.BrushRadius) * strength;
 
                     // Modify the grid point
                     m_SquareGrid.GridData[currentGridPos.x, currentGridPos.y] -= factor;
+                    if (m_SquareGrid.GridData[currentGridPos.x, currentGridPos.y] >= m_IsoValue) m_GridValueRemoved += factor;
 
                     // This is to make sure that not all of the terrain meshes in different chunks update even if you clicked nowhere near them.
                     shouldGenerate = true;

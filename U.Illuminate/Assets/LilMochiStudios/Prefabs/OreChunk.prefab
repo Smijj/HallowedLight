@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 9023654562615058854}
   - component: {fileID: 9023654562615058852}
   - component: {fileID: 9023654562615058855}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Terrain Renderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -93,7 +93,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9023654562941497619}
   - component: {fileID: 7044591549458194784}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: OreChunk
   m_TagString: Destructable
   m_Icon: {fileID: 0}
@@ -130,3 +130,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_MeshFilter: {fileID: 9023654562615058852}
   m_MeshRenderer: {fileID: 9023654562615058855}
+  m_InitializeOnStart: 0
+  m_UVScale: 0
+  m_GridSize: 0
+  m_GridScale: 0
+  m_IsoValue: 0
+  m_MaterialData: {fileID: 0}

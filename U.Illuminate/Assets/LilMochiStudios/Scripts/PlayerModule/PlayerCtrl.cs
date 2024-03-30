@@ -9,11 +9,11 @@ namespace LilMochiStudios.PlayerModule {
         [Header("Movement Settings")]
         [SerializeField] private float m_MoveSpeed = 1;
         [SerializeField] private float m_JumpForce = 3;
+        [SerializeField] private int m_MaxJumps = 2;
+        [ReadOnly, SerializeField] private int m_JumpCounter = 0;
 
         private Rigidbody rb;
         private Vector2 m_Input;
-
-
 
 
         private void Start() {
@@ -30,6 +30,10 @@ namespace LilMochiStudios.PlayerModule {
             HandleMovement();
         }
 
+        private void OnCollisionEnter(Collision collision) {
+            m_JumpCounter = 0;
+        }
+
         private void HandleMovement() {
             m_Input.x = Input.GetAxisRaw("Horizontal");
             m_Input.y = Input.GetAxisRaw("Vertical");
@@ -41,7 +45,10 @@ namespace LilMochiStudios.PlayerModule {
         }
 
         private void Jump() {
-            rb.AddForce(Vector3.up * m_JumpForce, ForceMode.Impulse);
+            if (m_JumpCounter < m_MaxJumps) {
+                rb.AddForce(Vector3.up * m_JumpForce, ForceMode.Impulse);
+                m_JumpCounter++;
+            }
         }
     }
 }

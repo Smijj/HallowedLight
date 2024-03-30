@@ -40,7 +40,7 @@ namespace LilMochiStudios.CoreModule {
             if (hit.collider == null) return;
 
             //OnTouching?.Invoke(hit.point);
-            PlayerModule.States.MiningState.OnMiningLaserContact?.Invoke(hit.point);
+            PlayerModule.States.DestructableState.OnDestructableContact?.Invoke(hit.point);
 
             //Vector3 worldPoint = m_Camera.ScreenToWorldPoint(Input.mousePosition);
             //Debug.Log($"Hit Point: {hit.point}\nWorldPoint: {worldPoint}");
