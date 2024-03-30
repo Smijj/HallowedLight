@@ -8,10 +8,11 @@ public class MeshGenerator : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private int m_MapSize = 10;
     [SerializeField] private int m_SquareSize = 1;
+    [SerializeField] private int m_IsoValue = 1;
     
     [Header("Debug")]
-    [SerializeField] private List<Vector3> m_Vertices;
-    [SerializeField] private List<int> m_Triangles;
+    [SerializeField] private List<Vector3> m_Vertices = new List<Vector3>();
+    [SerializeField] private List<int> m_Triangles = new List<int>();
     private SquareGrid m_SquareGrid;
 
     private Dictionary<int, List<Triangle>> m_TriangleDict = new Dictionary<int, List<Triangle>>();
@@ -26,20 +27,20 @@ public class MeshGenerator : MonoBehaviour
     private void Start() {
         if (!m_MeshFilter) m_MeshFilter = GetComponent<MeshFilter>();
 
-        GenerateMesh(GenerateGridData(m_MapSize), m_SquareSize);
+        GenerateMesh(GenerateGridData(m_MapSize), m_SquareSize, m_IsoValue);
     }
-    private int[,] GenerateGridData(int size) {
-        int[,] map = new int[size, size];
+    private float[,] GenerateGridData(int size) {
+        float[,] map = new float[size, size];
         for (int y = 0; y < size; y++) {
             for (int x = 0; x < size; x++) {
-                map[x, y] = 1;
-                //map[x, y] = Random.Range(0,2);
+                //map[x, y] = 1;
+                map[x, y] = Random.Range(0.8f, 2f);
             }
         }
         return map;
     }
-    public int[,] GenerateCircleGridData(int size, float circleSize) {
-        int[,] map = new int[size, size];
+    public float[,] GenerateCircleGridData(int size, float circleSize) {
+        float[,] map = new float[size, size];
         
         for (int y = 0; y < size; y++) {
             for (int x = 0; x < size; x++) {
@@ -48,39 +49,40 @@ public class MeshGenerator : MonoBehaviour
                 float distance = Vector2.Distance(new Vector2Int(size / 2, size / 2), new Vector2Int(x, y));
                 float factor = Mathf.Exp(-distance * circleSize / size) * size / 6;
 
-                map[x, y] = factor >= 1 ? 1 : 0;
+                map[x, y] = factor;
             }
         }
         return map;
     }
 
-    public void GenerateMesh(int[,] map, float squareSize) {
+    public void GenerateMesh(float[,] map, float squareSize, float isoValue) {
 
+        m_TriangleDict.Clear();
         m_Outlines.Clear();
         m_CheckedVertices.Clear();
-        m_TriangleDict.Clear();
 
-        m_SquareGrid = new SquareGrid(map, squareSize);
+        m_Vertices.Clear();
+        m_Triangles.Clear();
 
-        m_Vertices = new List<Vector3>();
-        m_Triangles = new List<int>();
-
+        m_SquareGrid = new SquareGrid(map, squareSize, isoValue);
         for (int x = 0; x < m_SquareGrid.Squares.GetLength(0); x++) {
             for (int y = 0; y < m_SquareGrid.Squares.GetLength(1); y++) {
-                TriangulateSquare(m_SquareGrid.Squares[x, y]);
+                Square currentSquare = m_SquareGrid.Squares[x, y];
+                currentSquare.Interpolate(isoValue);
+                TriangulateSquare(currentSquare);
             }
         }
 
+
         Mesh mesh = new Mesh();
-        m_MeshFilter.mesh = mesh;
 
         mesh.vertices = m_Vertices.ToArray();
         mesh.triangles = m_Triangles.ToArray();
         mesh.uv = GetVerticesV2();
         mesh.RecalculateNormals();
 
+        m_MeshFilter.mesh = mesh;
         Generate2DColliders();
-
         //CreateWallMesh();
     }
 
@@ -331,26 +333,27 @@ public class MeshGenerator : MonoBehaviour
     public class SquareGrid {
         public Square[,] Squares;
 
-        public SquareGrid(int[,] map, float squareSize) {
+        public SquareGrid(float[,] map, float squareSize, float isoValue) {
 
             int nodeCountX = map.GetLength(0);
             int nodeCountY = map.GetLength(1);
             float mapWidth = nodeCountX * squareSize;
             float mapHeight = nodeCountY * squareSize;
 
+            // Create all the control nodes (corner vertices)
             ControlNode[,] controlNodes = new ControlNode[nodeCountX, nodeCountY];
-
             for (int x = 0; x < nodeCountX; x++) {
                 for (int y = 0; y < nodeCountY; y++) {
                     Vector3 pos = new Vector3(-mapWidth / 2 + x * squareSize + squareSize / 2, -mapHeight / 2 + y * squareSize + squareSize / 2, 0);
-                    controlNodes[x, y] = new ControlNode(pos, map[x, y] == 1, squareSize);
+                    controlNodes[x, y] = new ControlNode(pos, map[x, y], squareSize);
                 }
             }
 
+            // Create all the squares in the grid
             Squares = new Square[nodeCountX - 1, nodeCountY - 1];
             for (int x = 0; x < nodeCountX - 1; x++) {
                 for (int y = 0; y < nodeCountY - 1; y++) {
-                    Squares[x, y] = new Square(controlNodes[x, y + 1], controlNodes[x + 1, y + 1], controlNodes[x + 1, y], controlNodes[x, y]);
+                    Squares[x, y] = new Square(isoValue, controlNodes[x + 1, y], controlNodes[x + 1, y + 1], controlNodes[x, y + 1], controlNodes[x, y]);
                 }
             }
         }
@@ -361,7 +364,7 @@ public class MeshGenerator : MonoBehaviour
         public Node CentreTop, CentreRight, CentreBottom, CentreLeft;
         public int Configuration;
 
-        public Square(ControlNode topRight, ControlNode bottomRight, ControlNode bottomLeft, ControlNode topLeft) {
+        public Square(float isoValue, ControlNode topRight, ControlNode bottomRight, ControlNode bottomLeft, ControlNode topLeft) {
             TopRight = topRight;   
             BottomRight = bottomRight;
             BottomLeft = bottomLeft;
@@ -372,14 +375,29 @@ public class MeshGenerator : MonoBehaviour
             CentreBottom = BottomLeft.Right;
             CentreLeft = BottomLeft.Above;
 
-            if (topLeft.Active)
+            if (topLeft.Value >= isoValue)
                 Configuration += 8;
-            if (topRight.Active)
+            if (topRight.Value >= isoValue)
                 Configuration += 4;
-            if (bottomRight.Active)
+            if (bottomRight.Value >= isoValue)
                 Configuration += 2;
-            if (bottomLeft.Active)
+            if (bottomLeft.Value >= isoValue)
                 Configuration += 1;
+        }
+
+        public void Interpolate(float isoValue) {
+
+            float topLerp = Mathf.InverseLerp(TopLeft.Value, TopRight.Value, isoValue);
+            CentreTop.Position = TopLeft.Position + (TopRight.Position - TopLeft.Position) * topLerp;
+
+            float rightLerp = Mathf.InverseLerp(TopRight.Value, BottomRight.Value, isoValue);
+            CentreRight.Position = TopRight.Position + (BottomRight.Position - TopRight.Position) * rightLerp;
+
+            float bottomLerp = Mathf.InverseLerp(BottomLeft.Value, BottomRight.Value, isoValue);
+            CentreBottom.Position = BottomLeft.Position + (BottomRight.Position - BottomLeft.Position) * bottomLerp;
+
+            float leftLerp = Mathf.InverseLerp(TopLeft.Value, BottomLeft.Value, isoValue);
+            CentreLeft.Position = TopLeft.Position + (BottomLeft.Position - TopLeft.Position) * leftLerp;
         }
     }
 
@@ -393,12 +411,12 @@ public class MeshGenerator : MonoBehaviour
     }
 
     public class ControlNode : Node {
-        public bool Active;
-        //public float Value;
+        //public bool Active;
+        public float Value;
         public Node Above, Right;
 
-        public ControlNode(Vector3 _pos, bool _active, float squareSize) : base(_pos) {
-            Active = _active;
+        public ControlNode(Vector3 _pos, float _value, float squareSize) : base(_pos) {
+            Value = _value;
             Above = new Node(Position + Vector3.up * squareSize / 2f);
             Right = new Node(Position + Vector3.right * squareSize / 2f);
         }
