@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace LilMochiStudios.TerrainModule {
     public struct SquareGrid {
+        
         private Square[,] m_Squares;
         public float[,] GridData;
 
