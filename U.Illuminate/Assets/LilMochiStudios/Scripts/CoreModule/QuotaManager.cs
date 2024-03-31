@@ -29,6 +29,11 @@ namespace LilMochiStudios.CoreModule {
                 // Material is in Quota
                 if (quota.Material == material) {
                     quota.Collected++;
+                    States.QuotaState.OnQuotaChanged?.Invoke(m_Quota);
+                    
+                    if (IsQuotaIsAchieved()) {
+                        States.QuotaState.OnQuotaReached?.Invoke();
+                    }
                 }
             }
         }
@@ -38,15 +43,30 @@ namespace LilMochiStudios.CoreModule {
                 // Material is in Quota
                 if (quota.Material == material) {
                     quota.Collected--;
+                    States.QuotaState.OnQuotaChanged?.Invoke(m_Quota);
                 }
             }
         }
+
+        
 
         private void InitializeQuota() {
             if (m_Quota.Count.Equals(0)) return;
             foreach (var quota in m_Quota) {
                 quota.Quota = Random.Range(m_QuotaMin, m_QuotaMax);
             }
+
+            States.QuotaState.OnQuotaChanged?.Invoke(m_Quota);
+        }
+
+        private bool IsQuotaIsAchieved() {
+            int quotaItemDone = 0;
+            foreach (var item in m_Quota) {
+                if (item.Collected >= item.Quota) {
+                    quotaItemDone++;
+                }
+            }
+            return quotaItemDone >= m_Quota.Count;
         }
 
         [System.Serializable]

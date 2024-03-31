@@ -47,10 +47,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb227832d7bddc84db4a4888d923a6b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_HangTime: 1.5
+  m_HangTime: 0.75
   m_HangTimeCounter: 0
   m_MaxMoveSpeed: 20
   m_SmoothTime: 0.35
+  m_AbsorbRange: 0.5
   m_SpriteRenderer: {fileID: 6323049107895036845}
 --- !u!135 &6323049107419290441
 SphereCollider:
