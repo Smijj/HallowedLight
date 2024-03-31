@@ -1,3 +1,4 @@
+using LilMochiStudios.TerrainModule.States;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -33,11 +34,11 @@ namespace LilMochiStudios.TerrainModule {
         }
         private void OnEnable() {
             //InputManager.OnTouching += OnMiningLaserContact;
-            PlayerModule.States.DestructableState.OnDestructableContact += OnMiningLaserContact;
+            DestructableState.OnDestructableContact += OnMiningLaserContact;
         }
         private void OnDisable() {
             //InputManager.OnTouching -= OnMiningLaserContact;
-            PlayerModule.States.DestructableState.OnDestructableContact -= OnMiningLaserContact;
+            DestructableState.OnDestructableContact -= OnMiningLaserContact;
         }
         private void Start() {
             if (m_InitializeOnStart) Initialize(m_GridSize, m_GridScale, m_IsoValue, m_UVScale, m_MaterialData);

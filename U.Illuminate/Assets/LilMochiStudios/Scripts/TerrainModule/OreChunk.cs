@@ -1,3 +1,4 @@
+using LilMochiStudios.TerrainModule.States;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -32,7 +33,8 @@ namespace LilMochiStudios.TerrainModule {
             m_PercentageMined = this.m_GridValueRemoved / this.m_SquareGrid.TotalGridDataValue;
             if (m_MaterialData.CanDropItem && m_PercentageMined - m_LastDropPercentage > m_MaterialData.DropRate) {
                 // drop ore
-                PlayerModule.States.DestructableState.OnDestructableDropItem?.Invoke(m_MaterialData);
+                Vector2 targetPoition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                DestructableState.OnDestructableDropItem?.Invoke(m_MaterialData, targetPoition);
 
                 m_LastDropPercentage = m_PercentageMined;
             }

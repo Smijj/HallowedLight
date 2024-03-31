@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace LilMochiStudios.TerrainModule {
 
-    public class OreDropCtrl : MonoBehaviour
+    public class DestructableDropCtrl : MonoBehaviour
     {
         [Header("Ore Drop Settings")]
         [SerializeField] private float m_HangTime = 1.5f;

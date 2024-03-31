@@ -1,4 +1,5 @@
 using LilMochiStudios.TerrainModule;
+using LilMochiStudios.TerrainModule.States;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Burst.CompilerServices;
@@ -17,19 +18,10 @@ namespace LilMochiStudios.PlayerModule {
         [SerializeField] private LineRenderer m_LaserLine;
         [SerializeField] private Transform m_LaserTransform;
         [SerializeField] private Transform m_PlayerTransform;
-        [SerializeField] private OreDropCtrl m_OreDropPrefab;
 
         private bool m_Clicking;
-        private Vector2 m_TargetPosition;
         private Camera m_Camera;
 
-
-        private void OnEnable() {
-            States.DestructableState.OnDestructableDropItem += SpawnOreDrop;
-        }
-        private void OnDisable() {
-            States.DestructableState.OnDestructableDropItem -= SpawnOreDrop;
-        }
 
         void Start() {
             m_Camera = Camera.main;
@@ -56,11 +48,6 @@ namespace LilMochiStudios.PlayerModule {
             }
         }
 
-        private void SpawnOreDrop(MaterialDataSO material) {
-            OreDropCtrl oreDrop = Instantiate(m_OreDropPrefab, m_TargetPosition, Quaternion.identity);
-            oreDrop.Initialize(transform, material);
-        }
-
         private void Clicking() {
 
             RaycastHit hit;
@@ -77,13 +64,11 @@ namespace LilMochiStudios.PlayerModule {
                 return;
             }
 
-            m_TargetPosition = hit.point;
-
             // Draw laser line
             ActivateLaser(hit.point);
 
             // Invoke mining event
-            States.DestructableState.OnDestructableContact?.Invoke(hit.point);
+            DestructableState.OnDestructableContact?.Invoke(hit.point);
         }
 
         private void RotateToMousePosition() {

@@ -1,3 +1,4 @@
+using LilMochiStudios.TerrainModule.States;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,6 +21,7 @@ namespace LilMochiStudios.TerrainModule {
         [SerializeField] private TerrainChunk m_TerrainChunkPrefab;
         [SerializeField] private OreChunk m_OreChunkPrefab;
         [SerializeField] private MaterialDataSO m_BedrockMaterial;
+        [SerializeField] private MaterialDataSO m_ThrowableLightMaterial;
         [SerializeField] private Transform m_TerrainParent;
         [SerializeField] private Transform m_OreParent;
         
@@ -107,6 +109,10 @@ namespace LilMochiStudios.TerrainModule {
             if (m_Player) m_Player.position = m_DropShip.position + Vector3.up;
             if (m_MiningBot) m_MiningBot.position = m_DropShip.position;
 
+            // Spawn in some Illumanium for the player to light their way
+            DestructableState.OnDestructableDropItem?.Invoke(m_ThrowableLightMaterial, m_DropShip.position);
+            DestructableState.OnDestructableDropItem?.Invoke(m_ThrowableLightMaterial, m_DropShip.position);
+            DestructableState.OnDestructableDropItem?.Invoke(m_ThrowableLightMaterial, m_DropShip.position);
         }
 
         private void GenerateOre(OreSpawnData[] oreSpawnTable, Vector2 spawnPosition, Chunk terrainChunk, int DepthY) {

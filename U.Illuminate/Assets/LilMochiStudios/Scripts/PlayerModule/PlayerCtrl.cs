@@ -1,3 +1,4 @@
+using LilMochiStudios.CoreModule;
 using LilMochiStudios.TerrainModule;
 using System.Collections;
 using System.Collections.Generic;
@@ -67,6 +68,10 @@ namespace LilMochiStudios.PlayerModule {
 
         private void ThrowLight() {
             if (m_ActiveLights.Count >= m_MaxActiveLights) return;
+
+            // Check if there is any Illumanium to throw
+            QuotaManager.QuotaItem quotaItem = CoreModule.States.QuotaState.OnGetQuotaItem?.Invoke(m_LightMaterial);
+            if (quotaItem == null || quotaItem.Collected <= 0) return;
 
             // Instantiate prefab
             ThrowableLightCtrl light = Instantiate(m_LightPrefab, transform.position + Vector3.up, Quaternion.identity, m_LightsParent);
