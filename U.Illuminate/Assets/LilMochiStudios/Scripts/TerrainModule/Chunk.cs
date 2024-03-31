@@ -25,7 +25,7 @@ namespace LilMochiStudios.TerrainModule {
         [SerializeField] protected float m_GridValueRemoved = 0f;
 
 
-        protected SquareGrid m_SquareGrid;
+        [SerializeField] protected SquareGrid m_SquareGrid;
 
 
         private void Reset() {
@@ -48,11 +48,7 @@ namespace LilMochiStudios.TerrainModule {
 
         private void OnMiningLaserContact(Vector3 worldPosition) {
             worldPosition.z = 0f;
-
-            // For spliting the terrain meshes into chunks, it converts the world space pos to a local pos to effect the correct mesh.
-            worldPosition = transform.InverseTransformPoint(worldPosition);
             Vector2Int gridPosition = GetGridPositionFromWorldPosition(worldPosition);
-
             DestroyTerrain(gridPosition);
         }
 
@@ -113,7 +109,7 @@ namespace LilMochiStudios.TerrainModule {
                     Vector2Int currentGridPos = new Vector2Int(x, y);
 
                     // Check if grids pos is valid, if not skip this grid pos
-                    if (!IsValidGridPosition(currentGridPos)) continue;
+                    if (!IsValidGridPosition(currentGridPos) || m_SquareGrid.GridData[currentGridPos.x, currentGridPos.y] <= 0) continue;
 
                     // Calculate how much we should edit a particular grid point based on the distance from where the player clicked
                     float distance = Vector2.Distance(currentGridPos, gridPosition);
@@ -177,14 +173,26 @@ namespace LilMochiStudios.TerrainModule {
         }
 
         private bool IsValidGridPosition(Vector2Int gridPosition) {
-            return gridPosition.x >= 0f && gridPosition.x < m_GridSize && gridPosition.y >= 0f && gridPosition.y < m_GridSize && m_SquareGrid.GridData[gridPosition.x, gridPosition.y] > 0;
+            return gridPosition.x >= 0f && gridPosition.x < m_GridSize && gridPosition.y >= 0f && gridPosition.y < m_GridSize;
         }
 
-        private Vector2Int GetGridPositionFromWorldPosition(Vector2 worldPosition) {
+        public Vector2Int GetGridPositionFromWorldPosition(Vector2 worldPosition) {
+            // For spliting the terrain meshes into chunks, it converts the world space pos to a local pos to effect the correct mesh.
+            worldPosition = transform.InverseTransformPoint(worldPosition);
+            
             Vector2Int gridPos = new Vector2Int();
             gridPos.x = Mathf.FloorToInt(worldPosition.x / m_GridScale + m_GridSize / 2 - m_GridScale / 2);
             gridPos.y = Mathf.FloorToInt(worldPosition.y / m_GridScale + m_GridSize / 2 - m_GridScale / 2);
+            
             return gridPos;
+        }
+
+        public float GetGridDataFromWorldPosition(Vector2 worldPosition) {
+            Vector2Int gridPos = GetGridPositionFromWorldPosition(worldPosition);
+            if (!IsValidGridPosition(gridPos)) {
+                return 1;
+            }
+            return m_SquareGrid.GridData[gridPos.x, gridPos.y];
         }
 
         #endregion
