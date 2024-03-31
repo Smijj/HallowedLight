@@ -25,6 +25,7 @@ namespace LilMochiStudios.TerrainModule {
         
         [SerializeField] private Transform m_DropShip;
         [SerializeField] private Transform m_Player;
+        [SerializeField] private Transform m_MiningBot;
 
         private void Start() {
             Generate();
@@ -37,7 +38,6 @@ namespace LilMochiStudios.TerrainModule {
             int worldGridPositionY = 0;
 
             int spawnChunkPositionX = Random.Range(1, m_WorldSizeX-1);
-            Debug.Log("Spawn Chunk x pos: " +spawnChunkPositionX);
 
             for (int w = 0; w < m_TerrainLayerData.Count; w++) {        // For each terain layer
                 for (int y = 0; y < m_TerrainLayerData[w].Depth; y++) { // For each row in this layer
@@ -68,7 +68,6 @@ namespace LilMochiStudios.TerrainModule {
 
                         if (y == 1 && x == spawnChunkPositionX) {
                             GenerateSpawn(terrainChunk);
-                            Debug.Log("Generate spawn: " + terrainChunk);
                         } else {
                             if (!worldBorderChunk) {
                                 // Dont generate an ore in the same chunk as the player spawns or in the world border
@@ -93,7 +92,7 @@ namespace LilMochiStudios.TerrainModule {
                     //Calculate how much we should edit a particular grid point based on the distance from where the player clicked
                     Vector2Int editPoint = new Vector2Int(Random.Range(x - randomness, x + randomness), Random.Range(y - randomness, y + randomness));
                     float distance = Vector2.Distance(centerPoint, editPoint);
-                    if (y >= centerPoint.y-1) {
+                    if (y >= centerPoint.y) {
                         float factor = Mathf.Exp(-distance * 0.8f / m_ChunkGridSize) * (m_ChunkGridSize * m_ChunkGridScale) / 6;
                         spawnArea[x, y] = factor;
                     }
@@ -102,13 +101,11 @@ namespace LilMochiStudios.TerrainModule {
             terrainChunk.RemoveTerrain(spawnArea);
 
             // Add dropship
-            //m_DropShip.position = terrainChunk.transform.InverseTransformPoint((Vector2)centerPoint * m_ChunkGridScale);
-            m_DropShip.position = terrainChunk.transform.position;
+            if (m_DropShip) m_DropShip.position = terrainChunk.transform.position;
 
             // Add player
-            //m_Player.position = terrainChunk.transform.InverseTransformPoint((Vector2)centerPoint + (Vector2.left * 2) * m_ChunkGridScale);
-            m_Player.position = terrainChunk.transform.position + Vector3.left;
-
+            if (m_Player) m_Player.position = m_DropShip.position + Vector3.up;
+            if (m_MiningBot) m_MiningBot.position = m_DropShip.position;
 
         }
 

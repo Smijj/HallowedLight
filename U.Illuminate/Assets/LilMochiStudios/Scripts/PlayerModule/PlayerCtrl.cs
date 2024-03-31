@@ -1,3 +1,4 @@
+using LilMochiStudios.TerrainModule;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,17 +13,30 @@ namespace LilMochiStudios.PlayerModule {
         [SerializeField] private int m_MaxJumps = 2;
         [ReadOnly, SerializeField] private int m_JumpCounter = 0;
 
-        private Rigidbody rb;
+        [Header("Light Settings")]
+        [SerializeField] private int m_MaxActiveLights = 4;
+        [SerializeField] private MaterialDataSO m_LightMaterial;
+        [SerializeField] private ThrowableLightCtrl m_LightPrefab;
+        [SerializeField] private Transform m_LightsParent;
+        [SerializeField] private List<ThrowableLightCtrl> m_ActiveLights = new List<ThrowableLightCtrl>();
+
+        private Rigidbody m_Rb;
         private Vector2 m_Input;
+        private Camera m_Camera;
 
 
         private void Start() {
-            rb = GetComponent<Rigidbody>();
+            m_Rb = GetComponent<Rigidbody>();
+            m_Camera = Camera.main;
         }
 
         private void Update() {
             if (Input.GetKeyDown(KeyCode.Space)) {
                 Jump();
+            }
+
+            if (Input.GetMouseButtonDown(1)) {
+                ThrowLight();
             }
         }
 
@@ -40,15 +54,37 @@ namespace LilMochiStudios.PlayerModule {
 
             if (m_Input.x < -0.1f || m_Input.x > 0.1f) {    
                 Vector3 moveDirection = new Vector3(m_Input.normalized.x * m_MoveSpeed, 0, 0);
-                rb.AddForce(moveDirection, ForceMode.Impulse);
+                m_Rb.AddForce(moveDirection, ForceMode.Impulse);
             }
         }
 
         private void Jump() {
             if (m_JumpCounter < m_MaxJumps) {
-                rb.AddForce(Vector3.up * m_JumpForce, ForceMode.Impulse);
+                m_Rb.AddForce(Vector3.up * m_JumpForce, ForceMode.Impulse);
                 m_JumpCounter++;
             }
+        }
+
+        private void ThrowLight() {
+            if (m_ActiveLights.Count >= m_MaxActiveLights) return;
+
+            // Instantiate prefab
+            ThrowableLightCtrl light = Instantiate(m_LightPrefab, transform.position + Vector3.up, Quaternion.identity, m_LightsParent);
+            m_ActiveLights.Add(light);
+            light.SetLightDestroyedCallback(OnLightDestroyed);
+
+            // Give object force in the direction of the mouse
+            Vector2 mousePosition = m_Camera.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 directionToMouse = mousePosition - (Vector2)transform.position;
+            light.AddForce(directionToMouse);
+
+            // Reduce quota for illumanium
+            CoreModule.States.QuotaState.OnRemoveFromQuota?.Invoke(m_LightMaterial);
+
+        }
+
+        private void OnLightDestroyed(ThrowableLightCtrl destroyedLight) {
+            m_ActiveLights.Remove(destroyedLight);
         }
     }
 }

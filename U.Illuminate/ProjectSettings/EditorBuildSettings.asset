@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/LilMochiStudios/Scenes/SampleScene.unity
-    guid: 8c9cfa26abfee488c85f1582747f6a02
+    path: Assets/LilMochiStudios/Scenes/MainMenu.unity
+    guid: 8a64167e2fb629c45913d1b60f1cc840
+  - enabled: 1
+    path: Assets/LilMochiStudios/Scenes/Game.unity
+    guid: bb34ab90017736945bac34e8e2b898d5
   m_configObjects: {}

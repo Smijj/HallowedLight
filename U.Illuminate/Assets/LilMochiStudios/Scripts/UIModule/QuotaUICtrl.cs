@@ -6,6 +6,7 @@ using static LilMochiStudios.CoreModule.QuotaManager;
 namespace LilMochiStudios.UIModule {
     public class QuotaUICtrl : MonoBehaviour
     {
+        [Header("Elements")]
         [SerializeField] private Transform m_QuotaItemListParent;
         [SerializeField] private QuotaUIItemCtrl m_QuotaItemPrefab;
 
