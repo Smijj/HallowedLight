@@ -2,14 +2,16 @@ using LilMochiStudios.TerrainModule.States;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static MeshGenerator;
 
 namespace LilMochiStudios.TerrainModule {
     public class TerrainManager : MonoBehaviour {
         
         [Header("World Settings")]
         [SerializeField] private int m_WorldSizeX = 50;
-        [SerializeField] private List<TerrainLayerData> m_TerrainLayerData;
-        
+        [SerializeField] private TerrainLayerData m_TerrainLayerData;
+        [SerializeField] private TerrainChunk[,] m_ChunksGrid;
+
         [Header("Chunk Settings")]
         [SerializeField] private float m_IsoValue = 1f;
         [SerializeField] private float m_UVScale = 0.1f;
@@ -29,57 +31,92 @@ namespace LilMochiStudios.TerrainModule {
         [SerializeField] private Transform m_Player;
         [SerializeField] private Transform m_MiningBot;
 
+        private void OnEnable() {
+            States.TerrainState.OnGetGridIsoValueFromWorldPos += GetGridIsoValueFromWorldPosition;
+            States.TerrainState.OnGetIsoValue += () => m_IsoValue;
+        }
+        private void OnDisable() {
+            States.TerrainState.OnGetGridIsoValueFromWorldPos -= GetGridIsoValueFromWorldPosition;
+            States.TerrainState.OnGetIsoValue -= () => m_IsoValue;
+        }
         private void Start() {
             Generate();
-            //GenerateOreChunk();
         }
 
         private void Generate() {
+            m_ChunksGrid = new TerrainChunk[m_WorldSizeX, m_TerrainLayerData.Height];
             float chunkSize = m_ChunkGridScale * (m_ChunkGridSize - 1);
-
-            int worldGridPositionY = 0;
 
             int spawnChunkPositionX = Random.Range(1, m_WorldSizeX-1);
 
-            for (int w = 0; w < m_TerrainLayerData.Count; w++) {        // For each terain layer
-                for (int y = 0; y < m_TerrainLayerData[w].Depth; y++) { // For each row in this layer
-                    for (int x = 0; x < m_WorldSizeX; x++) {            // For each column/item in this row
-                        bool worldBorderChunk = false;
-                        if (x == 0 || x == m_WorldSizeX - 1 || y == 0 || y == m_TerrainLayerData[w].Depth - 1) {
-                            worldBorderChunk = true;
-                        }
+            for (int y = 0; y < m_TerrainLayerData.Height; y++) { // For each row in this layer
+                for (int x = 0; x < m_WorldSizeX; x++) {            // For each column/item in this row
+                    bool worldBorderChunk = false;
+                    if (x == 0 || x == m_WorldSizeX - 1 || y == 0 || y == m_TerrainLayerData.Height - 1) {
+                        worldBorderChunk = true;
+                    }
 
-                        Vector2 spawnPosition = Vector2.zero;
+                    Vector2 spawnPosition = Vector2.zero;
 
-                        // Set position based on grid
-                        spawnPosition.x = x * chunkSize;
-                        spawnPosition.y = -y * chunkSize;
+                    // Set position based on grid
+                    spawnPosition.x = x * chunkSize;
+                    spawnPosition.y = y * chunkSize;
 
-                        // Centre terrain on orgin of the world
-                        spawnPosition.x -= (((float)m_WorldSizeX / 2) * chunkSize) - chunkSize / 2;
-                        spawnPosition.y += (worldGridPositionY * chunkSize) + (((m_TerrainLayerData[w].Depth / 2) * chunkSize) + chunkSize / 2);
+                    // Centre terrain on orgin of the world
+                    spawnPosition.x -= ((float)m_WorldSizeX / 2 * chunkSize) - chunkSize / 2;
+                    spawnPosition.y -= ((float)m_TerrainLayerData.Height / 2 * chunkSize) - chunkSize / 2;
 
-                        // Instantiate and Initialize the TerrainChunk
-                        TerrainChunk terrainChunk = Instantiate(m_TerrainChunkPrefab, spawnPosition, Quaternion.identity, m_TerrainParent);
+                    // Instantiate and Initialize the TerrainChunk
+                    TerrainChunk terrainChunk = Instantiate(m_TerrainChunkPrefab, spawnPosition, Quaternion.identity, m_TerrainParent);
+                    m_ChunksGrid[x, y] = terrainChunk;
 
-                        MaterialDataSO terrainMaterial = m_TerrainLayerData[w].MaterialData;
-                        if (worldBorderChunk) {
-                            terrainMaterial = m_BedrockMaterial;
-                        }
-                        terrainChunk.Initialize(m_ChunkGridSize, m_ChunkGridScale, m_IsoValue, m_UVScale, terrainMaterial);
+                    MaterialDataSO terrainMaterial = m_TerrainLayerData.MaterialData;
+                    if (worldBorderChunk) {
+                        terrainMaterial = m_BedrockMaterial;
+                    }
+                    terrainChunk.Initialize(m_ChunkGridSize, m_ChunkGridScale, m_IsoValue, m_UVScale, terrainMaterial);
 
-                        if (y == 1 && x == spawnChunkPositionX) {
-                            GenerateSpawn(terrainChunk);
-                        } else {
-                            if (!worldBorderChunk) {
-                                // Dont generate an ore in the same chunk as the player spawns or in the world border
-                                GenerateOre(m_TerrainLayerData[w].OreSpawnTable, spawnPosition, terrainChunk, y);
-                            }
+                    if (y == m_TerrainLayerData.Height - 2 && x == spawnChunkPositionX) {
+                        GenerateSpawn(terrainChunk);
+                    } else {
+                        if (!worldBorderChunk) {
+                            // Dont generate an ore in the same chunk as the player spawns or in the world border
+                            GenerateOre(m_TerrainLayerData.OreSpawnTable, spawnPosition, terrainChunk, y);
                         }
                     }
                 }
-                worldGridPositionY += m_TerrainLayerData[w].Depth;
             }
+            
+        }
+
+        public float GetGridIsoValueFromWorldPosition(Vector3 worldPosition) {
+
+            // Get Chunk
+            TerrainChunk chunk = GetChunkFromWorldPosition(worldPosition);
+            if (chunk == null) {
+                Debug.Log("Chunk doesnt exist at this position");
+                return m_IsoValue;
+            }
+
+            return chunk.GetGridDataFromWorldPosition(worldPosition);
+        }
+        private TerrainChunk GetChunkFromWorldPosition(Vector2 worldPosition) {
+            float chunkSize = m_ChunkGridScale * (m_ChunkGridSize - 1);
+            worldPosition.x += ((float)m_WorldSizeX / 2 * chunkSize);
+            worldPosition.y += ((float)m_TerrainLayerData.Height / 2 * chunkSize);
+
+            Vector2Int gridPos = new Vector2Int();
+            gridPos.x = Mathf.FloorToInt(worldPosition.x / chunkSize);
+            gridPos.y = Mathf.FloorToInt(worldPosition.y / chunkSize);
+
+            if (!IsValidGridPosition(gridPos)) return null;
+
+            TerrainChunk chunk = m_ChunksGrid[gridPos.x, gridPos.y];
+            return chunk;
+        }
+
+        private bool IsValidGridPosition(Vector2Int gridPosition) {
+            return gridPosition.x >= 0f && gridPosition.x < m_ChunksGrid.GetLength(0) && gridPosition.y >= 0f && gridPosition.y < m_ChunksGrid.GetLength(1);
         }
 
         private void GenerateSpawn(TerrainChunk terrainChunk) {
@@ -139,7 +176,7 @@ namespace LilMochiStudios.TerrainModule {
 
         [System.Serializable]
         public class TerrainLayerData {
-            public int Depth = 30;
+            public int Height = 30;
             public MaterialDataSO MaterialData;
             public OreSpawnData[] OreSpawnTable;
         }
