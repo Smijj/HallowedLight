@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b75a84aff7a517a45b289c900aabf37e, type: 3}
+  m_Name: Gold
+  m_EditorClassIdentifier: 
+  Material: {fileID: 2100000, guid: 9461251c247dadc439d7a54c2030ab0c, type: 2}
+  Hardness: 12
+  SizeRange: 2
+  SpawnShapeType: 2
+  BrushRadius: 5
+  BrushStrength: 1.5
+  BrushFalloff: 5.5
+  CanDropItem: 1
+  DropRate: 0.1
+  DropSprites:
+  - {fileID: 21300000, guid: 96ab572a07b66494c829728faf4b9cf1, type: 3}
+  - {fileID: 21300000, guid: 79122ad4d128e3e42a68d7b326f6bcae, type: 3}
+  - {fileID: 21300000, guid: 0ca415ca36ff04442802d473bdf05805, type: 3}
+  - {fileID: 21300000, guid: e7d2efe659f07f64ead1d158967eb641, type: 3}
+  - {fileID: 21300000, guid: a42839ee5879c724d90db1328ee31460, type: 3}
+  - {fileID: 21300000, guid: 8420217d5e0740644b8932ec99d4983e, type: 3}
+  - {fileID: 21300000, guid: 3fdb664dde882f2478153040dbd7d705, type: 3}
+  - {fileID: 21300000, guid: 023cd1965423c284fa73b654623ba90b, type: 3}
+  - {fileID: 21300000, guid: e4e7836bbe6463643826fb91ce0e5734, type: 3}
