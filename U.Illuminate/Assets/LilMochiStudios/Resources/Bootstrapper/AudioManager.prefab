@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3269006810939339510
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 135321948460840378}
+  - component: {fileID: 5824125727109384545}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &135321948460840378
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3269006810939339510}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5824125727109384545
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3269006810939339510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d432ea2d897dcf4490614bfed163da5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_MusicPlaylists:
+  - Name: Menu
+    Mixer: {fileID: -4221766984613777151, guid: b087f1e69199179429f1e1a3131e642c, type: 2}
+    PlayInRandomOrder: 1
+    Tracks:
+    - {fileID: 11400000, guid: a5169a6d9596f774688ea4a7e04ee8f0, type: 2}
+    - {fileID: 11400000, guid: 7e0996b648d91624fbea9c46af702208, type: 2}
+    - {fileID: 11400000, guid: abf86800234f3ff43b04eb45a6174db7, type: 2}
+  - Name: Game
+    Mixer: {fileID: -4221766984613777151, guid: b087f1e69199179429f1e1a3131e642c, type: 2}
+    PlayInRandomOrder: 1
+    Tracks:
+    - {fileID: 11400000, guid: 7e0996b648d91624fbea9c46af702208, type: 2}
+    - {fileID: 11400000, guid: abf86800234f3ff43b04eb45a6174db7, type: 2}
+    - {fileID: 11400000, guid: a55045fe8464321448776b49e257b0d5, type: 2}
+    - {fileID: 11400000, guid: ce518f9011080fb49a9436db26124bba, type: 2}
+  m_SfxMixer: {fileID: 3496220355966379059, guid: b087f1e69199179429f1e1a3131e642c, type: 2}
+  m_SFX:
+  - {fileID: 11400000, guid: 60f553999bd07f04e80fc34e2fd8fa4d, type: 2}
+  - {fileID: 11400000, guid: a73a5adfc4cacba48a270361344e3e6f, type: 2}
+  m_AmbientMixer: {fileID: -416142384700927386, guid: b087f1e69199179429f1e1a3131e642c, type: 2}
+  m_Ambient:
+  - {fileID: 11400000, guid: cebf51e0af262024e96a981d3ce2db6e, type: 2}
+  m_SubTrackIsPlaying: 0
+  m_MainQueue: []
+  m_AmbientTracks: []
+  m_CurrentTrack: {fileID: 0}
+  m_CurrentPlaylist:
+    Name: 
+    Mixer: {fileID: 0}
+    PlayInRandomOrder: 1
+    Tracks: []

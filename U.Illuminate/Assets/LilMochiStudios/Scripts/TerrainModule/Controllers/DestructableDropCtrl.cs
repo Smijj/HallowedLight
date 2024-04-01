@@ -35,6 +35,9 @@ namespace LilMochiStudios.TerrainModule {
 
             if (m_SpriteRenderer) m_SpriteRenderer.sprite = material.GetDropSprite();
 
+            // SFX
+            AudioManager.Instance.PlaySFX("DestructableBreak");
+
             m_Initialized = true;
         }
 

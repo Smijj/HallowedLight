@@ -22,12 +22,16 @@ namespace LilMochiStudios.PlayerModule {
         [SerializeField] private List<ThrowableLightCtrl> m_ActiveLights = new List<ThrowableLightCtrl>();
 
         private Rigidbody m_Rb;
+        private Animator m_Anim;
         private Vector2 m_Input;
         private Camera m_Camera;
+
+        private bool m_FacingRight = true;
 
 
         private void Start() {
             m_Rb = GetComponent<Rigidbody>();
+            m_Anim = GetComponent<Animator>();
             m_Camera = Camera.main;
         }
 
@@ -39,6 +43,16 @@ namespace LilMochiStudios.PlayerModule {
             if (Input.GetMouseButtonDown(1)) {
                 ThrowLight();
             }
+
+            if (Input.mousePosition.x <= Screen.width/2) {
+                m_FacingRight = false;
+                transform.localScale = new Vector3(-1, 1, 1);
+            } else {
+                transform.localScale = new Vector3(1, 1, 1);
+                m_FacingRight = true;
+            }
+
+            
         }
 
         private void FixedUpdate() {
@@ -56,6 +70,9 @@ namespace LilMochiStudios.PlayerModule {
             if (m_Input.x < -0.1f || m_Input.x > 0.1f) {    
                 Vector3 moveDirection = new Vector3(m_Input.normalized.x * m_MoveSpeed, 0, 0);
                 m_Rb.AddForce(moveDirection, ForceMode.Impulse);
+                m_Anim.Play("PlayerMovement");
+            } else {
+                m_Anim.Play("PlayerIdle");
             }
         }
 

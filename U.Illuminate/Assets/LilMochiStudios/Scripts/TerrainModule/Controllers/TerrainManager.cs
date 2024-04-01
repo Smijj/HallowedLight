@@ -143,7 +143,7 @@ namespace LilMochiStudios.TerrainModule {
             if (m_DropShip) m_DropShip.position = terrainChunk.transform.position;
 
             // Add player
-            if (m_Player) m_Player.position = m_DropShip.position + Vector3.up;
+            if (m_Player) m_Player.position = m_DropShip.position + Vector3.up * 2;
             if (m_MiningBot) m_MiningBot.position = m_DropShip.position;
 
             // Spawn in some Illumanium for the player to light their way

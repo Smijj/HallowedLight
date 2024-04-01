@@ -13,8 +13,12 @@ MonoBehaviour:
   m_Name: Dirt
   m_EditorClassIdentifier: 
   Material: {fileID: 2100000, guid: 3e970d1aefbd3e04ba3e13f0f7b16716, type: 2}
-  Hardness: 1
+  Hardness: 2.5
   SizeRange: 0.1
-  BrushRadius: 6
-  BrushStrength: 0.8
-  BrushFalloff: 4.5
+  SpawnShapeType: 0
+  BrushRadius: 7
+  BrushStrength: 0.6
+  BrushFalloff: 5
+  CanDropItem: 0
+  DropRate: 0.1
+  DropSprites: []

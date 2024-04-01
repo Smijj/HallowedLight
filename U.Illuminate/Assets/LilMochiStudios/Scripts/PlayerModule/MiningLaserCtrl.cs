@@ -14,10 +14,18 @@ namespace LilMochiStudios.PlayerModule {
         [SerializeField] private float m_LaserWidth = 0.01f;
         [SerializeField] private LayerMask m_DestructableLayerMask;
         
+        [SerializeField] private float m_SFXDelayMin = 0.3f;
+        [SerializeField] private float m_SFXDelayMax = 0.6f;
+        [ReadOnly, SerializeField] private float m_SFXDelay;
+        [ReadOnly, SerializeField] private float m_SFXDelayCounter = 0;
+        
         [Header("Elements")]
         [SerializeField] private LineRenderer m_LaserLine;
         [SerializeField] private Transform m_LaserTransform;
         [SerializeField] private Transform m_PlayerTransform;
+        [SerializeField] private ParticleSystem m_LaserHitPartcleSysPrefab;
+        [SerializeField] private ParticleSystem m_LaserHoldPartcleSysPrefab;
+        [SerializeField] private ParticleSystem m_LaserHoldPartcleSys;
 
         private bool m_Clicking;
         private Camera m_Camera;
@@ -40,11 +48,21 @@ namespace LilMochiStudios.PlayerModule {
 
             if (Input.GetMouseButtonDown(0)) {
                 m_Clicking = true;
+                
+                // Sfx
+                m_SFXDelay = Random.Range(m_SFXDelayMin, m_SFXDelayMax);
+                m_SFXDelayCounter = m_SFXDelay;     // Play sfx straight away when player clicks
+
+                // Vfx
+                m_LaserHoldPartcleSys = Instantiate(m_LaserHoldPartcleSysPrefab);
+
             } else if (Input.GetMouseButton(0) && m_Clicking) {
                 Clicking();
             } else if (Input.GetMouseButtonUp(0) && m_Clicking) {
                 m_Clicking = false;
                 DeactivateLaser();
+
+                Destroy(m_LaserHoldPartcleSys.gameObject);
             }
         }
 
@@ -67,8 +85,21 @@ namespace LilMochiStudios.PlayerModule {
             // Draw laser line
             ActivateLaser(hit.point);
 
+            m_LaserHoldPartcleSys.transform.position = (Vector2)hit.point;
+
             // Invoke mining event
             DestructableState.OnDestructableContact?.Invoke(hit.point);
+
+            // SFX
+            if (m_SFXDelayCounter >= m_SFXDelay) {
+                AudioManager.Instance.PlaySFX("LaserHit");
+                m_SFXDelayCounter = 0;
+                m_SFXDelay = Random.Range(m_SFXDelayMin, m_SFXDelayMax);
+
+                // Spawn particle effects
+                Instantiate(m_LaserHitPartcleSysPrefab, (Vector2)hit.point, Quaternion.identity);
+            }
+            m_SFXDelayCounter += Time.deltaTime;
         }
 
         private void RotateToMousePosition() {
@@ -85,7 +116,7 @@ namespace LilMochiStudios.PlayerModule {
 
             // Position and turn on point light
 
-            // Spawn particle effects
+            
         }
 
         private void DeactivateLaser() {
