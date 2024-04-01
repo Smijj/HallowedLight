@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace LilMochiStudios.PlayerModule {
     public class FlowFieldGridCtrl : MonoBehaviour
@@ -57,8 +60,10 @@ namespace LilMochiStudios.PlayerModule {
                 for (int y = 0; y < GridSize.y; y++) {
                     Vector3 drawPos = CurrentFlowField.Grid[x, y].WorldPosition;
                     Gizmos.DrawSphere(drawPos, CellRadius / 4);
+#if UNITY_EDITOR
                     //Handles.Label(drawPos + Vector3.forward, CurrentFlowField.Grid[x, y].BestCost.ToString());
                     Handles.Label(drawPos + Vector3.forward, $"x:{x}, y:{y}");
+#endif
                 }
             }
         }

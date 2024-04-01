@@ -44,6 +44,8 @@ namespace LilMochiStudios.PlayerModule {
         }
 
         private void Update() {
+            if (PauseMenuCtrl.Paused) return;
+
             RotateToMousePosition();
 
             if (Input.GetMouseButtonDown(0)) {
